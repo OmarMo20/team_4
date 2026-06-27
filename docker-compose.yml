@@ -7,16 +7,16 @@ services:
       - mongodb_data:/data/db
     restart: unless-stopped
 
-  backend:
+  auth-service:
     build:
-      context: ./Backend
+      context: ./Backend/services/auth-service
       dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
+    expose:
+      - "5001"
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/class_track_db
       - JWT_SECRET=123456
-      - PORT=5000
+      - PORT=5001
       - EMAIL_HOST=smtp.gmail.com
       - EMAIL_PORT=587
       - EMAIL_USER=classtrack123@gmail.com
@@ -24,6 +24,56 @@ services:
       - "EMAIL_FROM=ClassTrack <classtrack123@gmail.com>"
     depends_on:
       - mongodb
+    restart: unless-stopped
+
+  staff-service:
+    build:
+      context: ./Backend/services/staff-service
+      dockerfile: Dockerfile
+    expose:
+      - "5002"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/class_track_db
+      - JWT_SECRET=123456
+      - PORT=5002
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USER=classtrack123@gmail.com
+      - "EMAIL_PASS=qufg muhi pmqq ygrp"
+      - "EMAIL_FROM=ClassTrack <classtrack123@gmail.com>"
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  student-service:
+    build:
+      context: ./Backend/services/student-service
+      dockerfile: Dockerfile
+    expose:
+      - "5003"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/class_track_db
+      - JWT_SECRET=123456
+      - PORT=5003
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USER=classtrack123@gmail.com
+      - "EMAIL_PASS=qufg muhi pmqq ygrp"
+      - "EMAIL_FROM=ClassTrack <classtrack123@gmail.com>"
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./Backend/services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - auth-service
+      - staff-service
+      - student-service
     restart: unless-stopped
 
   frontend:
@@ -36,7 +86,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      - api-gateway
     restart: unless-stopped
 
 volumes:

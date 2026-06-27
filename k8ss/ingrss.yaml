@@ -3,21 +3,40 @@ kind: Ingress
 metadata:
   name: ingress-service
   annotations:
-    # REMOVE the rewrite-target annotation entirely
-    # Keep the regex if you are using specific regex paths
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
+          # Auth and User management routes
+          - path: /api/(auth|assistants|admin)/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-service-ip-service
+                port:
+                  number: 5001
+          
+          # Student & Parent portal routes
+          - path: /api/students/(portal|add)/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: student-service-ip-service
+                port:
+                  number: 5003
+
+          # Staff & Academic management routes (Default for other /api calls)
           - path: /api/?(.*)
             pathType: ImplementationSpecific
             backend:
               service:
-                name: backend-cluster-ip-service
+                name: staff-service-ip-service
                 port:
-                  number: 5000
+                  number: 5002
+
+          # Frontend routes
           - path: /?(.*)
             pathType: ImplementationSpecific
             backend:

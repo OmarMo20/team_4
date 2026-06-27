@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: student-service
+  template:
+    metadata:
+      labels:
+        component: student-service
+    spec:
+      containers:
+        - name: student-service
+          image: mohammededris/class-track-student-service
+          ports:
+            - containerPort: 5003
+          envFrom:
+            - secretRef:
+                name: backend-secrets
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: PORT
+              value: "5003"
+            - name: HOST
+              value: "localhost"
+            - name: JWT_EXPIRES_IN
+              value: "7d"
+            - name: BCRYPT_SALT_ROUNDS
+              value: "12"
+            - name: CORS_ORIGINS
+              value: "http://localhost:3000,http://localhost:5173"
+            - name: RATE_LIMIT_WINDOW_MS
+              value: "900000"
+            - name: RATE_LIMIT_MAX_REQUESTS
+              value: "100"
+            - name: EMAIL_HOST
+              value: "smtp.gmail.com"
+            - name: EMAIL_PORT
+              value: "587"
+            - name: EMAIL_USER
+              value: "classtrack123@gmail.com"
+            - name: EMAIL_FROM
+              value: "ClassTrack <classtrack123@gmail.com>"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-service-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: student-service
+  ports:
+    - port: 5003
+      targetPort: 5003
