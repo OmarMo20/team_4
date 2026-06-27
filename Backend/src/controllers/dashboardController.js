@@ -103,8 +103,8 @@ exports.getDashboardStats = async (req, res, next) => {
                         absent: a.absent
                     })),
                     financial: [
-                        { name: 'المدفوع', value: collectedIncome, color: '#10B981' }, // Emerald
-                        { name: 'المتبقي', value: expectedIncome - collectedIncome, color: '#F59E0B' } // Amber
+                        { name: 'Paid', value: collectedIncome, color: '#10B981' }, // Emerald
+                        { name: 'Remaining', value: expectedIncome - collectedIncome, color: '#F59E0B' } // Amber
                     ],
                     exams: formattedExamStats
                 }

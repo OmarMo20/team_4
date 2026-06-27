@@ -196,7 +196,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
                     );
                     if (tempStudent) {
                       // If duplicate error, remove temp version
-                      if (failedItem.error.includes('duplicate') || failedItem.error.includes('موجود')) {
+                      if (failedItem.error.includes('duplicate') || failedItem.error.includes('already exists') || failedItem.error.includes('registered')) {
                         console.log(`ℹ️ Temp student already exists: ${tempStudent.fullName}, removing temp version`);
                         removeStudentFromCache(tempStudent.id || tempStudent._id || '');
                         
@@ -253,7 +253,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
                   );
                   if (actionIndex !== -1) {
                     setSyncActions(prev => prev.map((action, idx) => 
-                      idx === actionIndex ? { ...action, status: 'failed' as const, error: 'خطأ في الاتصال' } : action
+                      idx === actionIndex ? { ...action, status: 'failed' as const, error: 'Connection error' } : action
                     ));
                   }
                 });
@@ -301,7 +301,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
                   } else if (response.success && response.data && response.data.failed.length > 0) {
                     // Still failed - check if duplicate
                     const error = response.data.failed[0].error;
-                    if (error.includes('duplicate') || error.includes('موجود')) {
+                    if (error.includes('duplicate') || error.includes('already exists') || error.includes('registered')) {
                       removeStudentFromCache(failedStudent.tempStudent.id || failedStudent.tempStudent._id || '');
                       totalSynced++;
                       totalFailed--;
@@ -658,7 +658,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
                       );
                       if (tempStudent) {
                         // If duplicate error, remove temp version
-                        if (failedItem.error.includes('duplicate') || failedItem.error.includes('موجود')) {
+                        if (failedItem.error.includes('duplicate') || failedItem.error.includes('already exists') || failedItem.error.includes('registered')) {
                           console.log(`ℹ️ Temp student already exists: ${tempStudent.fullName}, removing temp version`);
                           removeStudentFromCache(tempStudent.id || tempStudent._id || '');
                           
@@ -715,7 +715,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
                     );
                     if (actionIndex !== -1) {
                       setSyncActions(prev => prev.map((action, idx) => 
-                        idx === actionIndex ? { ...action, status: 'failed' as const, error: 'خطأ في الاتصال' } : action
+                        idx === actionIndex ? { ...action, status: 'failed' as const, error: 'Connection error' } : action
                       ));
                     }
                   });
@@ -763,7 +763,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
                     } else if (response.success && response.data && response.data.failed.length > 0) {
                       // Still failed - check if duplicate
                       const error = response.data.failed[0].error;
-                      if (error.includes('duplicate') || error.includes('موجود')) {
+                      if (error.includes('duplicate') || error.includes('already exists') || error.includes('registered')) {
                         removeStudentFromCache(failedStudent.tempStudent.id || failedStudent.tempStudent._id || '');
                         totalSynced++;
                         totalFailed--;
@@ -1012,7 +1012,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
   if (isAppRoute) {
     if (isLoading) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50" dir="rtl">
+        <div className="min-h-screen flex items-center justify-center bg-[#FCFCFC]" dir="ltr">
           <Spinner size="lg" />
         </div>
       );
@@ -1024,10 +1024,10 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 
     return (
       <OfflineGuard>
-      <div className="min-h-screen bg-[#FCFCFC] flex" dir="rtl">
+      <div className="min-h-screen bg-[#FCFCFC] flex" dir="ltr">
         <MobileGlassHeader />
         <Sidebar />
-        <main className="flex-1 p-4 pt-24 lg:pt-8 lg:p-8 overflow-y-auto lg:mr-[280px]">
+        <main className="flex-1 p-4 pt-24 lg:pt-8 lg:p-8 overflow-y-auto lg:ml-[120px]">
           <div className="max-w-[1400px] mx-auto">{children}</div>
         </main>
       </div>

@@ -31,10 +31,10 @@
 :root {
   --background: #ffffff;
   --foreground: #1f2937;
-  /* Main Color: #6339AC */
-  --primary: #6339AC;
-  --primary-hover: #502d8c;
-  --primary-light: #F0EBF8;
+  /* Main Color: #4F46E5 */
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-light: #EEF2FF;
   --font-cairo: "Cairo", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -44,9 +44,9 @@
 
   /* Map purple colors to our new brand color to automatically update all components */
   --color-purple-50: var(--primary-light);
-  --color-purple-100: #E6DDF5;
-  --color-purple-400: #8260BF;
-  --color-purple-500: #734CB6;
+  --color-purple-100: #E0E7FF;
+  --color-purple-400: #818CF8;
+  --color-purple-500: #6366F1;
   --color-purple-600: var(--primary);
   --color-purple-700: var(--primary-hover);
 
@@ -268,4 +268,13 @@ a {
     rgba(255, 255, 255, 0) 100%
   );
   background-size: 1000px 100%;
+}
+
+/* Utility to hide scrollbars completely */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;  /* Firefox */
 }

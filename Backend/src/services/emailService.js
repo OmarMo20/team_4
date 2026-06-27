@@ -36,18 +36,18 @@ const sendRegistrationOTP = async (email, otp, name) => {
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h1 style="color: #6B46C1;">ClassTrack</h1>
                 </div>
-                <h2 style="color: #333;">مرحباً ${name}!</h2>
+                <h2 style="color: #333;">Hello ${name}!</h2>
                 <p style="color: #666; font-size: 16px;">
-                    شكراً لتسجيلك في ClassTrack. استخدم الكود التالي لتأكيد بريدك الإلكتروني:
+                    Thank you for registering on ClassTrack. Use the following code to confirm your email address:
                 </p>
                 <div style="background: linear-gradient(135deg, #6B46C1, #805AD5); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0;">
                     <span style="font-size: 32px; font-weight: bold; color: white; letter-spacing: 8px;">${otp}</span>
                 </div>
                 <p style="color: #666; font-size: 14px;">
-                    هذا الكود صالح لمدة <strong>5 دقائق</strong> فقط.
+                    This code is valid for <strong>5 minutes</strong> only.
                 </p>
                 <p style="color: #999; font-size: 12px; margin-top: 30px;">
-                    إذا لم تقم بإنشاء حساب، يرجى تجاهل هذا البريد.
+                    If you did not create an account, please ignore this email.
                 </p>
             </div>
         `,
@@ -69,18 +69,18 @@ const sendPasswordResetOTP = async (email, otp, name) => {
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h1 style="color: #6B46C1;">ClassTrack</h1>
                 </div>
-                <h2 style="color: #333;">مرحباً ${name}!</h2>
+                <h2 style="color: #333;">Hello ${name}!</h2>
                 <p style="color: #666; font-size: 16px;">
-                    لقد طلبت إعادة تعيين كلمة المرور. استخدم الكود التالي:
+                    You have requested to reset your password. Use the following code:
                 </p>
                 <div style="background: linear-gradient(135deg, #6B46C1, #805AD5); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0;">
                     <span style="font-size: 32px; font-weight: bold; color: white; letter-spacing: 8px;">${otp}</span>
                 </div>
                 <p style="color: #666; font-size: 14px;">
-                    هذا الكود صالح لمدة <strong>5 دقائق</strong> فقط.
+                    This code is valid for <strong>5 minutes</strong> only.
                 </p>
                 <p style="color: #999; font-size: 12px; margin-top: 30px;">
-                    إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد.
+                    If you did not request a password reset, please ignore this email.
                 </p>
             </div>
         `,

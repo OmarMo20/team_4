@@ -71,7 +71,6 @@ export default function SessionControlPage() {
     };
 
     // Optimized cache save (using requestIdleCallback for better performance)
-    // Works for all devices to ensure data is available when going offline
     const saveCacheTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const saveToCacheOptimized = (attendancesList: SessionAttendance[], sessionData?: Session | null) => {
         if (typeof window === 'undefined') return;
@@ -81,10 +80,9 @@ export default function SessionControlPage() {
             clearTimeout(saveCacheTimeoutRef.current);
         }
         
-        // Use requestIdleCallback if available (better performance), otherwise use setTimeout
+        // Use requestIdleCallback if available, otherwise use setTimeout
         const saveToCache = () => {
             try {
-                // Use requestIdleCallback for non-blocking save
                 if ('requestIdleCallback' in window) {
                     requestIdleCallback(() => {
                         try {
@@ -100,7 +98,6 @@ export default function SessionControlPage() {
                         }
                     }, { timeout: 1000 });
                 } else {
-                    // Fallback: use setTimeout with minimal delay
                     setTimeout(() => {
                         try {
                             if (attendancesList) {
@@ -120,21 +117,16 @@ export default function SessionControlPage() {
             }
         };
         
-        // Debounce: wait 300ms before saving (reduced from 500ms for better responsiveness)
         saveCacheTimeoutRef.current = setTimeout(saveToCache, 300);
     };
 
-    // Auto-save to cache when data changes (works for all devices)
-    // This ensures data is always available when going offline
+    // Auto-save to cache when data changes
     useEffect(() => {
         if (typeof window === 'undefined') return;
         if (!sessionId || !session) return;
 
-        // Save session and attendances when they change (optimized with debouncing)
-        // Save in both online and offline modes to keep cache up-to-date
         saveToCacheOptimized(attendances, session);
 
-        // Cleanup timeout on unmount or when dependencies change
         return () => {
             if (saveCacheTimeoutRef.current) {
                 clearTimeout(saveCacheTimeoutRef.current);
@@ -157,18 +149,16 @@ export default function SessionControlPage() {
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
             if (isOffline) return;
             
-            // Wait a bit for page to initialize
             await new Promise(resolve => setTimeout(resolve, 500));
             
             const pendingCount = getSessionPendingActions(sessionId).length;
             if (pendingCount === 0) return;
             
             console.log(`🔄 Page loaded: Found ${pendingCount} pending actions for session ${sessionId}, syncing...`);
-            showToast(`جارٍ مزامنة ${pendingCount} إجراء محفوظ...`, 'info');
+            showToast(`Syncing ${pendingCount} saved actions...`, 'info');
             
             const result = await syncPendingActions({
                 addAttendance: async (sid, data) => {
-                    // Validate studentCode before sending
                     if (!data.studentCode || !data.studentCode.trim()) {
                         console.warn('⚠️ Skipping sync: Invalid studentCode', data);
                         throw new Error('Invalid student code');
@@ -178,7 +168,6 @@ export default function SessionControlPage() {
                         const response = await addStudentToSession(sid, data.studentCode.trim());
                         return response;
                     } catch (error: any) {
-                        // If student already exists (400) or not found (404), silently skip
                         if (error?.response?.status === 400) {
                             const message = error?.response?.data?.message || 'Student already added';
                             console.log(`ℹ️ Skipping sync (already exists): ${message}`, { sessionId: sid, studentCode: data.studentCode });
@@ -207,13 +196,12 @@ export default function SessionControlPage() {
             });
             
             if (result.success > 0) {
-                showToast(`تم مزامنة ${result.success} إجراء بنجاح`, 'success');
-                // Refresh session data
+                showToast(`Successfully synced ${result.success} actions`, 'success');
                 fetchSession();
             }
             
             if (result.failed > 0) {
-                showToast(`فشل في مزامنة ${result.failed} إجراء`, 'warning');
+                showToast(`Failed to sync ${result.failed} actions`, 'warning');
             }
         };
 
@@ -230,11 +218,10 @@ export default function SessionControlPage() {
             const pendingCount = getSessionPendingActions(sessionId).length;
             
             if (pendingCount > 0) {
-                showToast(`جارٍ مزامنة ${pendingCount} إجراء محفوظ...`, 'info');
+                showToast(`Syncing ${pendingCount} saved actions...`, 'info');
                 
                 const result = await syncPendingActions({
                     addAttendance: async (sid, data) => {
-                        // Validate studentCode before sending
                         if (!data.studentCode || !data.studentCode.trim()) {
                             console.warn('⚠️ Skipping sync: Invalid studentCode', data);
                             throw new Error('Invalid student code');
@@ -244,17 +231,14 @@ export default function SessionControlPage() {
                             const response = await addStudentToSession(sid, data.studentCode.trim());
                             return response;
                         } catch (error: any) {
-                            // If student already exists (400) or not found (404), silently skip
                             if (error?.response?.status === 400) {
                                 const message = error?.response?.data?.message || 'Student already added';
                                 console.log(`ℹ️ Skipping sync (already exists): ${message}`, { sessionId: sid, studentCode: data.studentCode });
-                                // Return success to mark as handled (no need to retry)
                                 return { success: true, message, data: null };
                             }
                             if (error?.response?.status === 404) {
                                 const message = error?.response?.data?.message || 'Student or session not found';
                                 console.log(`ℹ️ Skipping sync (not found): ${message}`, { sessionId: sid, studentCode: data.studentCode });
-                                // Return success to mark as handled (no need to retry)
                                 return { success: true, message, data: null };
                             }
                             throw error;
@@ -275,13 +259,12 @@ export default function SessionControlPage() {
                 });
                 
                 if (result.success > 0) {
-                    showToast(`تم مزامنة ${result.success} إجراء بنجاح`, 'success');
-                    // Refresh session data
+                    showToast(`Successfully synced ${result.success} actions`, 'success');
                     fetchSession();
                 }
                 
                 if (result.failed > 0) {
-                    showToast(`فشل في مزامنة ${result.failed} إجراء`, 'warning');
+                    showToast(`Failed to sync ${result.failed} actions`, 'warning');
                 }
             }
         };
@@ -295,14 +278,10 @@ export default function SessionControlPage() {
         try {
             setLoading(true);
             
-            // Check if device is offline
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
-            
-            // Check if this is a temporary session
             const isTempSession = sessionId.startsWith('temp_');
             
             if (isOffline || isTempSession) {
-                // Load cached data from localStorage (for offline or temp sessions)
                 console.log(isTempSession ? '📦 Loading temporary session data' : '📴 Offline mode: Loading cached session data');
                 try {
                     const cachedSession = localStorage.getItem(`session_${sessionId}`);
@@ -313,13 +292,11 @@ export default function SessionControlPage() {
                         setSession(sessionData);
                         setAttendanceCount((sessionData as any).attendanceCount || 0);
                         
-                        // Show info message for temp sessions
                         if (isTempSession) {
-                            showToast('جلسة مؤقتة - سيتم مزامنة البيانات عند عودة الاتصال', 'info');
+                            showToast('Temporary session - data will sync when online', 'info');
                         }
                     } else if (isTempSession) {
-                        // If temp session not found, redirect back
-                        showToast('الجلسة المؤقتة غير موجودة', 'error');
+                        showToast('Temporary session not found', 'error');
                         router.push('/dashboard/attendance');
                         return;
                     }
@@ -335,20 +312,18 @@ export default function SessionControlPage() {
                 } catch (cacheError) {
                     console.error('Error loading cached session:', cacheError);
                     if (isTempSession) {
-                        showToast('خطأ في تحميل بيانات الجلسة المؤقتة', 'error');
+                        showToast('Error loading temporary session data', 'error');
                         router.push('/dashboard/attendance');
                     } else {
-                        showToast('لا توجد بيانات محفوظة لهذه الجلسة', 'info');
+                        showToast('No saved data found for this session', 'info');
                     }
                 }
                 
-                // For temp sessions, don't try to fetch from server
                 if (isTempSession) {
                     setLoading(false);
                     return;
                 }
                 
-                // For offline mode with real sessions, return early
                 if (isOffline) {
                     return;
                 }
@@ -358,13 +333,11 @@ export default function SessionControlPage() {
             setSession(response.data);
             setAttendanceCount((response.data as any).attendanceCount || 0);
 
-            // Load existing attendance list
             const attendanceRes = await getSessionAttendance(sessionId);
             const attendancesList = attendanceRes.data?.attendances || [];
             console.log('📋 Loaded attendances:', attendancesList);
             setAttendances(attendancesList);
 
-            // Save to localStorage for offline use
             if (typeof window !== 'undefined') {
                 try {
                     localStorage.setItem(`session_${sessionId}`, JSON.stringify(response.data));
@@ -375,26 +348,22 @@ export default function SessionControlPage() {
                 }
             }
 
-            // Auto-update status to in-progress if it's scheduled
             if (response.data.status === 'scheduled') {
                 await updateSessionStatus(sessionId, 'in-progress');
                 setSession(prev => prev ? { ...prev, status: 'in-progress' } : null);
             }
         } catch (error: any) {
-            // If online request fails, try to use cached data
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
             
             if (!isOffline) {
-            console.error('Failed to fetch session:', error);
+                console.error('Failed to fetch session:', error);
                 
-                // Check if it's a 500 error
                 if (error.response?.status === 500) {
-                    showToast('حدث خطأ في الخادم. جارٍ استخدام البيانات المحفوظة...', 'warning');
+                    showToast('Server error. Using cached data...', 'warning');
                 } else {
-            showToast('فشل في تحميل بيانات الجلسة', 'error');
+                    showToast('Failed to load session data', 'error');
                 }
                 
-                // Try to use cached data as fallback
                 try {
                     const cachedSession = localStorage.getItem(`session_${sessionId}`);
                     const cachedAttendances = localStorage.getItem(`session_${sessionId}_attendances`);
@@ -415,7 +384,6 @@ export default function SessionControlPage() {
                     console.error('Error loading cached fallback session:', cacheError);
                 }
             } else {
-                // Silent fail in offline mode
                 console.log('📴 Offline mode: Session fetch failed (expected)');
             }
         } finally {
@@ -423,14 +391,11 @@ export default function SessionControlPage() {
         }
     };
 
-    // Lightweight refresh that avoids toggling the full-page loader (prevents spinner flashes while scanning)
     const refreshAttendanceOnly = async () => {
         try {
-            // Check if device is offline
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
             
             if (isOffline) {
-                // Use cached data
                 const cachedAttendances = localStorage.getItem(`session_${sessionId}_attendances`);
                 if (cachedAttendances) {
                     const list = JSON.parse(cachedAttendances);
@@ -446,7 +411,6 @@ export default function SessionControlPage() {
             setAttendances(list);
             setAttendanceCount(list.length);
             
-            // Update cache
             if (typeof window !== 'undefined') {
                 try {
                     localStorage.setItem(`session_${sessionId}_attendances`, JSON.stringify(list));
@@ -455,13 +419,11 @@ export default function SessionControlPage() {
                 }
             }
         } catch (error: any) {
-            // Keep scanning UX stable; don't interrupt user with loader
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
             
             if (!isOffline) {
-            console.error('Failed to refresh attendance list:', error);
+                console.error('Failed to refresh attendance list:', error);
                 
-                // Try to use cached data as fallback
                 try {
                     const cachedAttendances = localStorage.getItem(`session_${sessionId}_attendances`);
                     if (cachedAttendances) {
@@ -477,7 +439,7 @@ export default function SessionControlPage() {
     };
 
     const handleEndSession = async () => {
-        if (!confirm('هل أنت متأكد من إنهاء الجلسة؟')) {
+        if (!confirm('Are you sure you want to end the session?')) {
             return;
         }
 
@@ -486,29 +448,24 @@ export default function SessionControlPage() {
             router.push('/dashboard/attendance');
         } catch (error) {
             console.error('Failed to end session:', error);
-            showToast('فشل في إنهاء الجلسة', 'error');
+            showToast('Failed to end session', 'error');
         }
     };
 
     const handleRemoveAttendance = async (attendanceId: string) => {
-        if (!confirm('هل أنت متأكد من إلغاء حضور هذا الطالب؟')) {
+        if (!confirm('Are you sure you want to cancel this student\'s attendance?')) {
             return;
         }
 
         const isOffline = typeof window !== 'undefined' && !navigator.onLine;
 
         try {
-            // If attendance ID is temporary (starts with temp_), it was created offline
-            // and hasn't been synced yet, so we can just remove it locally
             if (attendanceId.startsWith('temp_')) {
-                // Remove from local state and cache
                 const updatedAttendances = attendances.filter(a => a.id !== attendanceId);
                 setAttendances(updatedAttendances);
                 setAttendanceCount(prev => Math.max(0, prev - 1));
-                // Save optimized - always save to keep cache up-to-date
                 saveToCacheOptimized(updatedAttendances, session);
                 
-                // Remove from queue if it exists
                 const { getQueue, removeAction } = await import('@/lib/offline-sync');
                 const queue = getQueue();
                 const pendingAction = queue.find(a => 
@@ -521,34 +478,28 @@ export default function SessionControlPage() {
                     removeAction(pendingAction.id);
                 }
                 
-                showToast('تم إلغاء حضور الطالب', 'success');
+                showToast('Student attendance cancelled', 'success');
                 return;
             }
 
             if (isOffline) {
-                // Queue action for offline
                 queueAction({
                     type: 'remove_attendance',
                     sessionId,
                     data: { attendanceId },
                 });
                 
-                // Update UI optimistically
                 const updatedAttendances = attendances.filter(a => a.id !== attendanceId);
                 setAttendances(updatedAttendances);
                 setAttendanceCount(prev => Math.max(0, prev - 1));
-
-                // Save to cache optimized (offline mode) - non-blocking
-                // Always save to keep cache up-to-date
                 saveToCacheOptimized(updatedAttendances, session);
                 
-                showToast('تم حفظ الإجراء. سيتم رفعه عند عودة الاتصال', 'info');
+                showToast('Action saved. Will sync when online', 'info');
                 return;
             }
 
             const response = await removeStudentFromSession(sessionId, attendanceId);
 
-            // Update attendance count and list
             if (response.data?.attendanceCount !== undefined) {
                 setAttendanceCount(response.data.attendanceCount);
             }
@@ -556,41 +507,34 @@ export default function SessionControlPage() {
             const updatedAttendances = attendances.filter(a => a.id !== attendanceId);
             setAttendances(updatedAttendances);
 
-                // Save to cache optimized (online mode) - non-blocking
-                // Always save to ensure data is available when going offline
-                if (navigator.onLine) {
-                    saveToCacheOptimized(updatedAttendances, session);
-                }
+            if (navigator.onLine) {
+                saveToCacheOptimized(updatedAttendances, session);
+            }
 
-            showToast(response.message || 'تم إلغاء حضور الطالب بنجاح', 'success');
+            showToast(response.message || 'Student attendance cancelled successfully', 'success');
         } catch (error: any) {
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
             
-            // If attendance ID is temporary, don't queue it (already handled above)
             if (attendanceId.startsWith('temp_')) {
                 console.log('⚠️ Attempted to remove temp attendance, already handled locally');
                 return;
             }
             
             if (isOffline) {
-                // Queue action for offline
                 queueAction({
                     type: 'remove_attendance',
                     sessionId,
                     data: { attendanceId },
                 });
                 
-                // Update UI optimistically
                 setAttendances(prev => prev.filter(a => a.id !== attendanceId));
                 setAttendanceCount(prev => Math.max(0, prev - 1));
                 
-                showToast('تم حفظ الإجراء. سيتم رفعه عند عودة الاتصال', 'info');
+                showToast('Action saved. Will sync when online', 'info');
             } else {
-            console.error('Failed to remove student from session:', error);
-            const message =
-                error?.response?.data?.message ||
-                'فشل في إلغاء حضور الطالب، حاول مرة أخرى';
-            showToast(message, 'error');
+                console.error('Failed to remove student from session:', error);
+                const message = error?.response?.data?.message || 'Failed to cancel attendance, try again';
+                showToast(message, 'error');
             }
         }
     };
@@ -598,22 +542,18 @@ export default function SessionControlPage() {
     const handleTogglePaid = async (attendanceId: string, currentStatus: SessionAttendance['status']) => {
         const isOffline = typeof window !== 'undefined' && !navigator.onLine;
         const nextStatus = currentStatus === 'present' ? 'unpaid' : 'paid';
-        // Map the API status ('paid' | 'unpaid') to the internal model status ('present' | 'absent')
-        // Based on backend logic: 'paid' -> 'present', 'unpaid' -> 'absent'
         const nextLocalStatus: SessionAttendance['status'] = nextStatus === 'paid' ? 'present' : 'absent';
 
         try {
             setUpdatingStatus(true);
             
             if (isOffline) {
-                // Queue action for offline
                 queueAction({
                     type: 'update_attendance_status',
                     sessionId,
                     data: { attendanceId, status: nextStatus },
                 });
                 
-                // Update UI optimistically
                 const updatedAttendances = attendances.map((a) =>
                     a.id === attendanceId
                         ? { ...a, status: nextLocalStatus }
@@ -624,11 +564,9 @@ export default function SessionControlPage() {
                     setSelectedAttendance({ ...selectedAttendance, status: nextLocalStatus });
                 }
 
-                // Save to cache optimized (offline mode) - non-blocking
-                // Always save to keep cache up-to-date
                 saveToCacheOptimized(updatedAttendances, session);
                 
-                showToast('تم حفظ التغيير. سيتم رفعه عند عودة الاتصال', 'info');
+                showToast('Change saved. Will sync when online', 'info');
                 return;
             }
 
@@ -639,36 +577,31 @@ export default function SessionControlPage() {
             }
             if (updated) {
                 const updatedAttendances = attendances.map((a) =>
-                        a.id === attendanceId
-                            ? { ...a, status: updated.status as SessionAttendance['status'] }
-                            : a
+                    a.id === attendanceId
+                        ? { ...a, status: updated.status as SessionAttendance['status'] }
+                        : a
                 );
                 setAttendances(updatedAttendances);
                 
-                // Update selected attendance if modal is open
                 if (selectedAttendance?.id === attendanceId) {
                     setSelectedAttendance({ ...selectedAttendance, status: updated.status as SessionAttendance['status'] });
                 }
 
-                // Save to cache optimized (online mode) - non-blocking
-                // Always save to ensure data is available when going offline
                 if (navigator.onLine) {
                     saveToCacheOptimized(updatedAttendances, session);
                 }
             }
-            showToast('تم تحديث حالة الطالب', 'success');
+            showToast('Student status updated', 'success');
         } catch (error: any) {
             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
             
             if (isOffline) {
-                // Queue action for offline
                 queueAction({
                     type: 'update_attendance_status',
                     sessionId,
                     data: { attendanceId, status: nextStatus },
                 });
                 
-                // Update UI optimistically
                 const updatedAttendances = attendances.map((a) =>
                     a.id === attendanceId
                         ? { ...a, status: nextLocalStatus }
@@ -679,16 +612,12 @@ export default function SessionControlPage() {
                     setSelectedAttendance({ ...selectedAttendance, status: nextLocalStatus });
                 }
 
-                // Save to cache optimized (offline mode) - non-blocking
-                // Always save to keep cache up-to-date
                 saveToCacheOptimized(updatedAttendances, session);
                 
-                showToast('تم حفظ التغيير. سيتم رفعه عند عودة الاتصال', 'info');
+                showToast('Change saved. Will sync when online', 'info');
             } else {
                 console.error('Failed to update attendance status:', error);
-                const message =
-                    error?.response?.data?.message ||
-                    'فشل في تحديث حالة الطالب، حاول مرة أخرى';
+                const message = error?.response?.data?.message || 'Failed to update student status, try again';
                 showToast(message, 'error');
             }
         } finally {
@@ -711,7 +640,6 @@ export default function SessionControlPage() {
         try {
             setAddingStudent(true);
             
-            // Always check student in local cache first (for both online and offline)
             const { searchStudentsInCache } = await import('@/lib/students-cache');
             const cachedStudents = searchStudentsInCache(trimmedCode);
             const foundStudent = cachedStudents.find(s => 
@@ -721,34 +649,30 @@ export default function SessionControlPage() {
                 s.studentCode?.endsWith(trimmedCode)
             );
             
-            // Validate: Student must exist in cache (same as online validation)
             if (!foundStudent) {
-                showToast('لم يتم العثور على طالب بهذا الكود', 'error');
+                showToast('No student found with this code', 'error');
                 setStudentSearch('');
                 return;
             }
             
-            // Check if already exists in attendance list
             const exists = attendances.some(a => 
                 a.student.nationalId === trimmedCode ||
                 a.student.nationalId === foundStudent.nationalId
             );
             
             if (exists) {
-                showToast('تم تسجيل هذا الطالب بالفعل', 'warning');
+                showToast('This student is already registered', 'warning');
                 setStudentSearch('');
                 return;
             }
             
             if (isOffline) {
-                // Queue action for offline
                 queueAction({
                     type: 'add_attendance',
                     sessionId,
                     data: { studentCode: trimmedCode },
                 });
                 
-                // Create attendance with real student data
                 const tempAttendance: SessionAttendance = {
                     id: `temp_${Date.now()}`,
                     status: 'present',
@@ -763,15 +687,13 @@ export default function SessionControlPage() {
                 const updatedAttendances = [tempAttendance, ...attendances];
                 setAttendances(updatedAttendances);
                 setAttendanceCount(updatedAttendances.length);
-                // Save optimized - always save to keep cache up-to-date
                 saveToCacheOptimized(updatedAttendances, session);
                 setStudentSearch('');
                 
-                showToast(`تم تسجيل حضور: ${foundStudent.fullName}`, 'success');
+                showToast(`Attendance registered for: ${foundStudent.fullName}`, 'success');
                 return;
             }
 
-            // Online mode: send to server (validation already done above)
             const response = await addStudentToSession(sessionId, trimmedCode);
 
             if (response.data?.attendanceCount !== undefined) {
@@ -785,20 +707,16 @@ export default function SessionControlPage() {
                 ];
                 setAttendances(updatedAttendances);
 
-                // Save to cache optimized (online mode) - non-blocking
-                // Always save to ensure data is available when going offline
                 if (navigator.onLine) {
                     saveToCacheOptimized(updatedAttendances, session);
                 }
             }
 
             setStudentSearch('');
-            showToast(response.message || 'تم تسجيل حضور الطالب بنجاح', 'success');
+            showToast(response.message || 'Student attendance registered successfully', 'success');
         } catch (error: any) {
             console.error('Failed to add student to session:', error);
-            const message =
-                error?.response?.data?.message ||
-                'فشل في إضافة الطالب، تأكد من كود الطالب وحاول مرة أخرى';
+            const message = error?.response?.data?.message || 'Failed to add student, check the student code and try again';
             showToast(message, 'error');
         } finally {
             setAddingStudent(false);
@@ -841,16 +759,12 @@ export default function SessionControlPage() {
             try {
                 await scanner.start(
                     { facingMode: 'environment' },
-                    // Larger scan box since we're going full-bleed on this page
                     { fps: 10, qrbox: { width: 320, height: 320 }, aspectRatio: 1 },
                     async (decodedText) => {
-                        // anti-duplicate within 2s
                         const trimmed = decodedText.trim();
                         if (!trimmed) return;
-                        // Accept only numeric codes to avoid random noise reads
                         if (!/^[0-9]{3,20}$/.test(trimmed)) return;
                         const now = Date.now();
-                        // Global cooldown to avoid rapid repeated toasts
                         if (now < cooldownRef.current) return;
                         cooldownRef.current = now + 1500;
                         const last = lastScanRef.current;
@@ -860,7 +774,6 @@ export default function SessionControlPage() {
                         try {
                             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
                             
-                            // Always check student in local cache first (for both online and offline)
                             const { searchStudentsInCache } = await import('@/lib/students-cache');
                             const cachedStudents = searchStudentsInCache(trimmed);
                             const foundStudent = cachedStudents.find(s => 
@@ -871,32 +784,28 @@ export default function SessionControlPage() {
                                 s.nationalId?.endsWith(trimmed)
                             );
                             
-                            // Validate: Student must exist in cache (same as online validation)
                             if (!foundStudent) {
-                                showToast('لم يتم العثور على طالب بهذا الكود', 'error');
+                                showToast('No student found with this code', 'error');
                                 return;
                             }
                             
-                            // Check if already exists in attendance list
                             const exists = attendances.some(a => 
                                 a.student.nationalId === trimmed ||
                                 a.student.nationalId === foundStudent.nationalId
                             );
                             
                             if (exists) {
-                                showToast('تم تسجيل هذا الطالب بالفعل', 'warning');
+                                showToast('This student is already registered', 'warning');
                                 return;
                             }
                             
                             if (isOffline) {
-                                // Queue action for offline
                                 queueAction({
                                     type: 'scan_attendance',
                                     sessionId,
                                     data: { qrToken: trimmed },
                                 });
                                 
-                                // Create attendance with real student data
                                 const tempAttendance: SessionAttendance = {
                                     id: `temp_${Date.now()}`,
                                     status: 'present',
@@ -911,10 +820,9 @@ export default function SessionControlPage() {
                                 const updatedAttendances = [tempAttendance, ...attendances];
                                 setAttendances(updatedAttendances);
                                 setAttendanceCount(updatedAttendances.length);
-                                // Save optimized - always save to keep cache up-to-date
                                 saveToCacheOptimized(updatedAttendances, session);
                                 
-                                showToast(`تم تسجيل حضور: ${foundStudent.fullName}`, 'success');
+                                showToast(`Attendance registered for: ${foundStudent.fullName}`, 'success');
                                 return;
                             }
                             
@@ -922,27 +830,20 @@ export default function SessionControlPage() {
                             const status = res?.data?.status;
                             const studentName = res?.data?.studentName || '';
                             if (status === 'new') {
-                                showToast(`تم تسجيل حضور: ${studentName}`, 'success');
-                                // Update count optimistically (avoid full reload spinner)
+                                showToast(`Attendance registered for: ${studentName}`, 'success');
                                 setAttendanceCount((c) => c + 1);
                             } else if (status === 'already') {
-                                showToast(`تم تسجيل هذا الطالب بالفعل: ${studentName}`, 'warning');
+                                showToast(`This student is already registered: ${studentName}`, 'warning');
                             } else {
-                                showToast('استجابة غير متوقعة من السيرفر', 'error');
+                                showToast('Unexpected server response', 'error');
                             }
-                            // Lightweight refresh attendance list (no full-page loading spinner)
                             refreshAttendanceOnly().then(() => {
-                                // Save to cache after refresh (online mode)
-                                // Note: attendances state will be updated by refreshAttendanceOnly
                                 if (navigator.onLine && session) {
-                                    // Wait a bit for state to update, then save
                                     setTimeout(() => {
-                                        // Get fresh attendances from state (will be updated by refreshAttendanceOnly)
                                         const cachedAttendances = localStorage.getItem(`session_${sessionId}_attendances`);
                                         if (cachedAttendances) {
                                             try {
                                                 const parsed = JSON.parse(cachedAttendances);
-                                                // Save optimized - always save to keep cache up-to-date
                                                 saveToCacheOptimized(parsed, session);
                                             } catch {
                                                 // Ignore parse errors
@@ -954,7 +855,6 @@ export default function SessionControlPage() {
                         } catch (err: any) {
                             const isOffline = typeof window !== 'undefined' && !navigator.onLine;
                             
-                            // Try to find student in local cache as fallback
                             try {
                                 const { searchStudentsInCache } = await import('@/lib/students-cache');
                                 const cachedStudents = searchStudentsInCache(trimmed);
@@ -966,34 +866,30 @@ export default function SessionControlPage() {
                                     s.nationalId?.endsWith(trimmed)
                                 );
                                 
-                                // Validate: Student must exist in cache (same as online validation)
                                 if (!foundStudent) {
                                     const message = isOffline 
-                                        ? 'الطالب غير موجود في البيانات المحلية'
-                                        : (err?.response?.data?.message || 'لم يتم العثور على طالب بهذا الكود');
+                                        ? 'Student not found in local data'
+                                        : (err?.response?.data?.message || 'No student found with this code');
                                     showToast(message, 'error');
                                     return;
                                 }
                                 
-                                // Check if already exists
                                 const exists = attendances.some(a => 
                                     a.student.nationalId === trimmed ||
                                     a.student.nationalId === foundStudent.nationalId
                                 );
                                 
                                 if (exists) {
-                                    showToast('تم تسجيل هذا الطالب بالفعل', 'warning');
+                                    showToast('This student is already registered', 'warning');
                                     return;
                                 }
                                 
-                                // Queue action for offline
                                 queueAction({
                                     type: 'scan_attendance',
                                     sessionId,
                                     data: { qrToken: trimmed },
                                 });
                                 
-                                // Create attendance with real student data
                                 const tempAttendance: SessionAttendance = {
                                     id: `temp_${Date.now()}`,
                                     status: 'present',
@@ -1008,17 +904,12 @@ export default function SessionControlPage() {
                                 const updatedAttendances = [tempAttendance, ...attendances];
                                 setAttendances(updatedAttendances);
                                 setAttendanceCount(updatedAttendances.length);
-                                // Save optimized - always save to keep cache up-to-date
                                 saveToCacheOptimized(updatedAttendances, session);
                                 
-                                showToast(`تم تسجيل حضور: ${foundStudent.fullName}`, 'success');
+                                showToast(`Attendance registered for: ${foundStudent.fullName}`, 'success');
                             } catch (cacheError) {
-                                // If cache lookup fails, show original error
-                            const message =
-                                err?.response?.data?.message ||
-                                err?.response?.data?.error ||
-                                'فشل في تسجيل الحضور';
-                            showToast(message, 'error');
+                                const message = err?.response?.data?.message || err?.response?.data?.error || 'Failed to register attendance';
+                                showToast(message, 'error');
                             }
                         }
                     },
@@ -1029,7 +920,7 @@ export default function SessionControlPage() {
                 setScanState('scanning');
             } catch (e: any) {
                 console.error('Camera start failed:', e);
-                setCameraError('تعذر تشغيل الكاميرا. تأكد من منح الصلاحيات.');
+                setCameraError('Unable to start camera. Make sure permissions are granted.');
                 setScanState('error');
             }
         };
@@ -1053,13 +944,13 @@ export default function SessionControlPage() {
     if (!session) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <p className="text-gray-500">الجلسة غير موجودة</p>
+                <p className="text-gray-500">Session not found</p>
             </div>
         );
     }
 
     const sessionDate = new Date(session.date);
-    const formattedDate = sessionDate.toLocaleDateString('ar-EG', {
+    const formattedDate = sessionDate.toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -1067,61 +958,61 @@ export default function SessionControlPage() {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#FBFAFF] via-white to-white" dir="rtl">
+        <div className="min-h-screen bg-gradient-to-b from-[#FBFAFF] via-white to-white" dir="ltr">
             {/* Main Content */}
             <div className="w-full px-4 pb-24 pt-4 sm:px-6 sm:pb-10 sm:pt-6 space-y-4 sm:space-y-6">
                 {/* Compact top header (full bleed horizontally) */}
-                <div className="-mx-4 sm:-mx-6 rounded-3xl bg-white/90 backdrop-blur border border-black/5 shadow-sm">
+                <div className="-mx-4 sm:-mx-6 rounded-3xl bg-white/90 backdrop-blur border border-black/5 shadow-xl">
                     <div className="p-4 sm:p-6">
                         <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
+                            <div className="min-w-0 text-left">
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => router.push(isAssistant ? ROUTES.ATTENDANCE : '/dashboard/attendance')}
-                                        className="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                                        className="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-[#DBDEE1] hover:bg-[#FCFCFC] transition-colors"
                                     >
-                                        <ChevronRight className="h-4 w-4" />
-                                        <span className="hidden sm:inline">رجوع</span>
+                                        <ChevronRight className="h-4 w-4 rotate-180" />
+                                        <span className="hidden sm:inline">Back</span>
                                     </button>
-                                    <span className="inline-flex items-center rounded-full bg-purple-50 px-2.5 py-1 text-xs font-semibold text-purple-700">
-                                        جلسة مباشرة
+                                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
+                                        Live Session
                                     </span>
                                 </div>
                                 <h1 className="mt-3 text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900 truncate">
-                                    {(session as any)?.title || 'جلسة'}
+                                    {(session as any)?.title || 'Session'}
                                 </h1>
-                                <p className="mt-1 text-sm text-gray-600">
+                                <p className="mt-1 text-sm text-gray-500">
                                     {formattedDate}
                                 </p>
                             </div>
 
                             <button
                                 onClick={handleEndSession}
-                                className="shrink-0 rounded-2xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-red-600 active:scale-[0.99] transition"
+                                className="shrink-0 rounded-2xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-xl hover:bg-red-600 active:scale-[0.99] transition"
                             >
-                                إنهاء
+                                End
                             </button>
                         </div>
 
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                            <div className="rounded-2xl border border-gray-100 bg-gradient-to-l from-white to-purple-50/60 p-3 sm:p-4">
+                        <div className="mt-4 grid grid-cols-2 gap-3 text-left">
+                            <div className="rounded-2xl border border-gray-200 bg-gradient-to-r from-white to-purple-50/60 p-3 sm:p-4">
                                 <div className="flex items-center justify-between">
-                                    <div className="text-xs text-gray-500">الحضور</div>
-                                    <Users className="h-4 w-4 text-purple-600" />
+                                    <div className="text-xs text-gray-500">Attendance</div>
+                                    <Users className="h-4 w-4 text-indigo-600" />
                                 </div>
                                 <div className="mt-1 text-lg sm:text-xl font-extrabold text-gray-900">
                                     {attendanceCount}
-                                    <span className="mr-1 text-sm font-semibold text-gray-600">طالب</span>
+                                    <span className="ml-1 text-sm font-semibold text-gray-500">Students</span>
                                 </div>
                             </div>
-                            <div className="rounded-2xl border border-gray-100 bg-gradient-to-l from-white to-purple-50/60 p-3 sm:p-4">
+                            <div className="rounded-2xl border border-gray-200 bg-gradient-to-r from-white to-purple-50/60 p-3 sm:p-4">
                                 <div className="flex items-center justify-between">
-                                    <div className="text-xs text-gray-500">السعر</div>
-                                    <DollarSign className="h-4 w-4 text-purple-600" />
+                                    <div className="text-xs text-gray-500">Price</div>
+                                    <DollarSign className="h-4 w-4 text-indigo-600" />
                                 </div>
                                 <div className="mt-1 text-lg sm:text-xl font-extrabold text-gray-900">
                                     {session.price}
-                                    <span className="mr-1 text-sm font-semibold text-gray-600">د.م</span>
+                                    <span className="ml-1 text-sm font-semibold text-gray-500">EGP</span>
                                 </div>
                             </div>
                         </div>
@@ -1129,16 +1020,16 @@ export default function SessionControlPage() {
                 </div>
 
                 {/* Add Student by Attendance (no outer container card) */}
-                <div className="mt-3 sm:mt-5 px-0 sm:px-0 pt-2 sm:pt-3 pb-3 sm:pb-4 border-b border-gray-100">
+                <div className="mt-3 sm:mt-5 px-0 sm:px-0 pt-2 sm:pt-3 pb-3 sm:pb-4 border-b border-gray-200 text-left">
                     <div className="flex items-start justify-between gap-3 mb-3">
                         <div>
-                            <h2 className="text-base sm:text-lg font-extrabold text-gray-900">إضافة طالب بالكود</h2>
-                            <p className="mt-1 text-xs sm:text-sm text-gray-600">
-                                اكتب كود الطالب ثم اضغط إضافة
+                            <h2 className="text-base sm:text-lg font-extrabold text-gray-900">Add Student by Code</h2>
+                            <p className="mt-1 text-xs sm:text-sm text-gray-500">
+                                Type student code and press Add
                             </p>
                         </div>
-                        <span className="shrink-0 text-xs font-semibold text-purple-700 bg-purple-50 px-3 py-1 rounded-full">
-                            سريع
+                        <span className="shrink-0 text-xs font-semibold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">
+                            Quick
                         </span>
                     </div>
 
@@ -1148,8 +1039,8 @@ export default function SessionControlPage() {
                             inputMode="numeric"
                             value={studentSearch}
                             onChange={(e) => setStudentSearch(e.target.value)}
-                            placeholder="ادخل كود الطالب"
-                            className="flex-1 py-3 px-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent text-right text-gray-900 placeholder:text-gray-400 transition-all duration-200"
+                            placeholder="Enter student code"
+                            className="flex-1 py-3 px-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-left text-gray-900 placeholder:text-[#80848E] transition-all duration-200"
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                     void handleAddStudent(e);
@@ -1160,43 +1051,43 @@ export default function SessionControlPage() {
                         <button
                             onClick={(e) => void handleAddStudent(e as unknown as React.FormEvent)}
                             disabled={addingStudent}
-                            className="shrink-0 bg-purple-600 text-white px-5 py-3 rounded-2xl font-bold hover:bg-purple-700 active:scale-[0.99] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="shrink-0 bg-indigo-600 text-white px-5 py-3 rounded-2xl font-bold hover:bg-indigo-700 active:scale-[0.99] transition disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                            {addingStudent ? '...' : 'إضافة'}
+                            {addingStudent ? '...' : 'Add'}
                         </button>
                     </div>
                 </div>
 
                 {/* QR Scan inline for this session (no outer container card) */}
-                <div className="px-0 sm:px-0 pt-3 sm:pt-4 pb-4 sm:pb-5 border-b border-gray-100 space-y-3">
+                <div className="px-0 sm:px-0 pt-3 sm:pt-4 pb-4 sm:pb-5 border-b border-gray-200 space-y-3 text-left">
                     <div className="flex items-start justify-between gap-3">
                         <div>
-                            <h2 className="text-base sm:text-lg font-extrabold text-gray-900">المسح بالكاميرا (QR)</h2>
-                            <p className="mt-1 text-xs sm:text-sm text-gray-600">
-                                شغّل الكاميرا ووجّهها للكود — ستستمر بعد كل مسح.
+                            <h2 className="text-base sm:text-lg font-extrabold text-gray-900">Camera Scan (QR)</h2>
+                            <p className="mt-1 text-xs sm:text-sm text-gray-500">
+                                Start the camera and point it at the code — it continues scanning.
                             </p>
                         </div>
                         <button
                             onClick={() => setCameraEnabled((v) => !v)}
-                            className={`shrink-0 px-4 py-2.5 rounded-2xl font-bold shadow-sm transition-colors ${cameraEnabled
+                            className={`shrink-0 px-4 py-2.5 rounded-2xl font-bold shadow-xl transition-colors ${cameraEnabled
                                 ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                                : 'bg-purple-600 text-white hover:bg-purple-700'
+                                : 'bg-indigo-600 text-white hover:bg-indigo-700'
                                 }`}
                         >
-                            {cameraEnabled ? 'إيقاف' : 'تشغيل'}
+                            {cameraEnabled ? 'Stop' : 'Start'}
                         </button>
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>
-                            الحالة:{' '}
+                            Status:{' '}
                             {scanState === 'scanning'
-                                ? 'يتم المسح...'
+                                ? 'Scanning...'
                                 : scanState === 'starting'
-                                    ? 'تشغيل الكاميرا...'
+                                    ? 'Starting camera...'
                                     : scanState === 'error'
-                                        ? 'خطأ'
-                                        : 'متوقفة'}
+                                        ? 'Error'
+                                        : 'Stopped'}
                         </span>
                         <span className="truncate max-w-[45%]">
                             {(session as any)?.title || ''}
@@ -1209,28 +1100,28 @@ export default function SessionControlPage() {
                         </div>
                     )}
 
-                    <div className="rounded-3xl border border-gray-100 bg-gradient-to-b from-gray-50 to-white p-3 sm:p-4">
+                    <div className="rounded-3xl border border-gray-200 bg-gradient-to-b from-gray-50 to-white p-3 sm:p-4">
                         <div id={regionId} className="w-full max-w-md mx-auto" />
                     </div>
                 </div>
 
                 {/* Students in this session (no outer container card) */}
-                <div className="px-0 sm:px-0 pt-4 sm:pt-6 pb-8 sm:pb-10">
+                <div className="px-0 sm:px-0 pt-4 sm:pt-6 pb-8 sm:pb-10 text-left">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2 min-w-0">
-                            <div className="h-9 w-9 rounded-2xl bg-purple-50 flex items-center justify-center">
-                                <Users className="h-5 w-5 text-purple-600" />
+                            <div className="h-9 w-9 rounded-2xl bg-indigo-50 flex items-center justify-center">
+                                <Users className="h-5 w-5 text-indigo-600" />
                             </div>
                             <h2 className="text-base sm:text-lg font-extrabold text-gray-900 truncate">
-                                الطلاب ({attendances.length})
+                                Students ({attendances.length})
                             </h2>
                         </div>
                     </div>
 
                     {attendances.length === 0 ? (
                         <div className="-mx-4 sm:mx-0">
-                            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center text-sm text-gray-500">
-                                لم يتم تسجيل حضور أي طالب بعد
+                            <div className="rounded-2xl border border-dashed border-gray-200 bg-[#FCFCFC] py-8 text-center text-sm text-gray-500">
+                                No student attendance registered yet
                             </div>
                         </div>
                     ) : (
@@ -1239,20 +1130,18 @@ export default function SessionControlPage() {
                                 <div
                                     key={attendance.id}
                                     onClick={() => setSelectedAttendance(attendance)}
-                                    className="animate-slide-in-up rounded-2xl border border-gray-100 bg-gradient-to-l from-white to-purple-50/40 px-4 py-3 flex items-start justify-between gap-3 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                                    className="animate-slide-in-up rounded-2xl border border-gray-200 bg-gradient-to-r from-white to-purple-50/40 px-4 py-3 flex items-start justify-between gap-3 shadow-xl hover:shadow-2xl transition-shadow duration-200 cursor-pointer"
                                 >
-                                    <div className="min-w-0 flex-1">
+                                    <div className="min-w-0 flex-1 text-left">
                                         <p className="font-bold text-gray-900 truncate">
-                                            {attendance.student?.fullName || attendance.studentCode || 'طالب غير معروف'}
+                                            {attendance.student?.fullName || attendance.studentCode || 'Unknown Student'}
                                         </p>
                                         <p className="text-xs text-gray-500 mt-1">
-                                            كود: {attendance.student?.nationalId || attendance.studentCode || 'غير متوفر'} •{' '}
-                                            {' '}
-                                            {new Date(attendance.createdAt).toLocaleTimeString('ar-EG', {
+                                            Code: {attendance.student?.nationalId || attendance.studentCode || 'Not Available'} •{' '}
+                                            {new Date(attendance.createdAt).toLocaleTimeString('en-US', {
                                                 hour: '2-digit',
                                                 minute: '2-digit',
-                                            })}{' '}
-                                            م
+                                            })}
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-2 shrink-0">
@@ -1262,7 +1151,7 @@ export default function SessionControlPage() {
                                                 : 'bg-amber-50 text-amber-700'
                                                 }`}
                                         >
-                                            {attendance.status === 'present' ? 'مسدد' : 'غير مسدد'}
+                                            {attendance.status === 'present' ? 'Paid' : 'Unpaid'}
                                         </span>
                                     </div>
                                 </div>
@@ -1279,16 +1168,16 @@ export default function SessionControlPage() {
                         onClick={() => setCameraEnabled((v) => !v)}
                         className={`flex-1 rounded-2xl px-4 py-3 text-sm font-extrabold transition-colors ${cameraEnabled
                             ? 'bg-red-100 text-red-700'
-                            : 'bg-purple-600 text-white'
+                            : 'bg-indigo-600 text-white'
                             }`}
                     >
-                        {cameraEnabled ? 'إيقاف الكاميرا' : 'تشغيل الكاميرا'}
+                        {cameraEnabled ? 'Stop Camera' : 'Start Camera'}
                     </button>
                     <button
                         onClick={handleEndSession}
-                        className="rounded-2xl bg-red-500 px-4 py-3 text-sm font-extrabold text-white shadow-sm"
+                        className="rounded-2xl bg-red-500 px-4 py-3 text-sm font-extrabold text-white shadow-xl"
                     >
-                        إنهاء
+                        End
                     </button>
                 </div>
             </div>
@@ -1300,13 +1189,13 @@ export default function SessionControlPage() {
                     onClick={() => setSelectedAttendance(null)}
                 >
                     <div
-                        className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden"
+                        className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden text-left"
                         onClick={(e) => e.stopPropagation()}
-                        dir="rtl"
+                        dir="ltr"
                     >
                         {/* Header */}
                         <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between rounded-t-3xl">
-                            <h3 className="text-lg sm:text-xl font-bold text-gray-900">تفاصيل الطالب</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-900">Student Details</h3>
                             <button
                                 onClick={() => setSelectedAttendance(null)}
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -1319,27 +1208,27 @@ export default function SessionControlPage() {
                         <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
                             {/* Student Name */}
                             <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">الاسم الكامل</label>
-                                <p className="mt-1 text-lg font-bold text-gray-900">{selectedAttendance.student?.fullName || 'طالب محذوف'}</p>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
+                                <p className="mt-1 text-lg font-bold text-gray-900">{selectedAttendance.student?.fullName || 'Deleted Student'}</p>
                             </div>
 
                             {/* Student Code */}
                             <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">كود الطالب</label>
-                                <p className="mt-1 text-base text-gray-700">{selectedAttendance.student?.nationalId || 'غير متوفر'}</p>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Student Code</label>
+                                <p className="mt-1 text-base text-[#DBDEE1]">{selectedAttendance.student?.nationalId || 'Not Available'}</p>
                             </div>
 
                             {/* Parent Phone */}
                             <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">رقم ولي الأمر</label>
-                                <p className="mt-1 text-base text-gray-700">
-                                    {selectedAttendance.student?.parentPhone || 'غير متوفر'}
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Parent's Phone</label>
+                                <p className="mt-1 text-base text-[#DBDEE1]">
+                                    {selectedAttendance.student?.parentPhone || 'Not Available'}
                                 </p>
                             </div>
 
                             {/* Status */}
                             <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">الحالة</label>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Status</label>
                                 <div className="mt-1">
                                     <span
                                         className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-medium ${selectedAttendance.status === 'present'
@@ -1347,16 +1236,16 @@ export default function SessionControlPage() {
                                             : 'bg-amber-50 text-amber-700'
                                             }`}
                                     >
-                                        {selectedAttendance.status === 'present' ? 'مسدد' : 'غير مسدد'}
+                                        {selectedAttendance.status === 'present' ? 'Paid' : 'Unpaid'}
                                     </span>
                                 </div>
                             </div>
 
                             {/* Attendance Time */}
                             <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">وقت التسجيل</label>
-                                <p className="mt-1 text-base text-gray-700">
-                                    {new Date(selectedAttendance.createdAt).toLocaleString('ar-EG', {
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Registration Time</label>
+                                <p className="mt-1 text-base text-[#DBDEE1]">
+                                    {new Date(selectedAttendance.createdAt).toLocaleString('en-US', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric',
@@ -1369,35 +1258,35 @@ export default function SessionControlPage() {
                             {/* Session Info */}
                             {session && (
                                 <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase">الجلسة</label>
-                                    <p className="mt-1 text-base text-gray-700">
-                                        {(session as any)?.title || 'جلسة'} • {session.price} ج.م
+                                    <label className="text-xs font-semibold text-gray-500 uppercase">Session</label>
+                                    <p className="mt-1 text-base text-[#DBDEE1]">
+                                        {(session as any)?.title || 'Session'} • {session.price} EGP
                                     </p>
                                 </div>
                             )}
                         </div>
 
                         {/* Actions - fixed at bottom */}
-                        <div className="flex-shrink-0 bg-gray-50 border-t border-gray-200 px-4 sm:px-6 py-4 rounded-b-3xl space-y-2">
+                        <div className="flex-shrink-0 bg-[#FCFCFC] border-t border-gray-200 px-4 sm:px-6 py-4 rounded-b-3xl space-y-2">
                             <button
                                 onClick={() => {
                                     void handleTogglePaid(selectedAttendance.id, selectedAttendance.status);
                                 }}
                                 disabled={updatingStatus}
-                                className="w-full rounded-2xl bg-purple-600 text-white px-4 py-3 font-bold hover:bg-purple-700 active:scale-[0.99] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="w-full rounded-2xl bg-indigo-600 text-white px-4 py-3 font-bold hover:bg-indigo-700 active:scale-[0.99] transition disabled:opacity-60 disabled:cursor-not-allowed"
                             >
-                                {updatingStatus ? 'جاري التحديث...' : selectedAttendance.status === 'present' ? 'تعيين كغير مسدد' : 'تعيين كمسدد'}
+                                {updatingStatus ? 'Updating...' : selectedAttendance.status === 'present' ? 'Set as Unpaid' : 'Set as Paid'}
                             </button>
                             <button
                                 onClick={() => {
-                                    if (confirm('هل أنت متأكد من إلغاء حضور هذا الطالب؟')) {
+                                    if (confirm('Are you sure you want to cancel this student\'s attendance?')) {
                                         void handleRemoveAttendance(selectedAttendance.id);
                                         setSelectedAttendance(null);
                                     }
                                 }}
                                 className="w-full rounded-2xl border border-red-200 bg-red-50 text-red-600 px-4 py-3 font-bold hover:bg-red-100 hover:border-red-300 transition-colors"
                             >
-                                إلغاء الحضور
+                                Cancel Attendance
                             </button>
                         </div>
                     </div>

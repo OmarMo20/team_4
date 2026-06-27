@@ -22,7 +22,7 @@ export default function ReportsPage() {
 
     const performSearch = async (code: string) => {
         if (!code.trim()) {
-            setError('من فضلك أدخل كود الطالب');
+            setError('Please enter student code');
             return;
         }
 
@@ -35,10 +35,10 @@ export default function ReportsPage() {
             if (response.success && response.data) {
                 setReport(response.data);
             } else {
-                setError('لم يتم العثور على طالب بهذا الكود');
+                setError('No student found with this code');
             }
         } catch (err: any) {
-            const errorMessage = err?.response?.data?.message || 'حدث خطأ أثناء جلب التقرير';
+            const errorMessage = err?.response?.data?.message || 'An error occurred while fetching the report';
             setError(errorMessage);
         } finally {
             setLoading(false);
@@ -72,53 +72,53 @@ export default function ReportsPage() {
     const generateReportMessage = () => {
         if (!report) return '';
 
-        let message = `📋 *تقرير شامل للطالب*\n`;
+        let message = `📋 *Comprehensive Student Report*\n`;
         message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-        // معلومات الطالب
-        message += `👤 *المعلومات الشخصية:*\n`;
-        message += `• الاسم: ${report.student.fullName}\n`;
-        message += `• الصف: ${report.student.grade}\n`;
+        // Student Info
+        message += `👤 *Personal Information:*\n`;
+        message += `• Name: ${report.student.fullName}\n`;
+        message += `• Grade: ${report.student.grade}\n`;
         if (report.student.classroom) {
-            message += `• السنتر: ${report.student.classroom}\n`;
+            message += `• Center: ${report.student.classroom}\n`;
         }
         if (report.student.studentPhone) {
-            message += `• هاتف الطالب: ${report.student.studentPhone}\n`;
+            message += `• Student Phone: ${report.student.studentPhone}\n`;
         }
         if (report.student.parentPhone) {
-            message += `• رقم ولي الأمر: ${report.student.parentPhone}\n`;
+            message += `• Parent Phone: ${report.student.parentPhone}\n`;
         }
         if (report.student.monthlyFee && report.student.monthlyFee > 0) {
-            message += `• الاشتراك الشهري: ${formatCurrency(report.student.monthlyFee)}\n`;
+            message += `• Monthly Fee: ${formatCurrency(report.student.monthlyFee)}\n`;
         }
         message += `\n`;
 
-        // الإحصائيات
-        message += `📊 *الإحصائيات:*\n`;
-        message += `• أيام الحضور: ${report.statistics.presentCount}\n`;
-        message += `• الامتحانات: ${report.statistics.totalExams}\n`;
-        message += `• الخدمات الإضافية: ${report.statistics.totalAdditionalServices}\n`;
+        // Statistics
+        message += `📊 *Statistics:*\n`;
+        message += `• Present Days: ${report.statistics.presentCount}\n`;
+        message += `• Exams: ${report.statistics.totalExams}\n`;
+        message += `• Additional Services: ${report.statistics.totalAdditionalServices}\n`;
         if (report.statistics.averageGrade) {
-            message += `• المتوسط: ${report.statistics.averageGrade.toFixed(1)}\n`;
+            message += `• Average: ${report.statistics.averageGrade.toFixed(1)}\n`;
         }
         message += `\n`;
 
-        // المالية
+        // Financials
         if (report.statistics.totalPaid > 0 || report.statistics.totalPending > 0) {
-            message += `💰 *الحالة المالية:*\n`;
-            message += `• المدفوع: ${formatCurrency(report.statistics.totalPaid)}\n`;
-            message += `• المعلق: ${formatCurrency(report.statistics.totalPending)}\n`;
+            message += `💰 *Financial Status:*\n`;
+            message += `• Paid: ${formatCurrency(report.statistics.totalPaid)}\n`;
+            message += `• Pending: ${formatCurrency(report.statistics.totalPending)}\n`;
             message += `\n`;
         }
 
-        // آخر 5 سجلات حضور
+        // Last 5 attendance logs
         if (report.attendances.length > 0) {
-            message += `📅 *آخر سجلات الحضور:*\n`;
+            message += `📅 *Last Attendance Logs:*\n`;
             report.attendances.slice(0, 5).forEach((attendance) => {
-                const status = attendance.status === 'present' ? '✅ حاضر' :
-                    attendance.status === 'absent' ? '❌ غائب' : '⚠️ متأخر';
+                const status = attendance.status === 'present' ? '✅ Present' :
+                    attendance.status === 'absent' ? '❌ Absent' : '⚠️ Late';
                 const sessionTitle = attendance.session?.title ||
-                    (attendance.session?.grade ? `جلسة ${attendance.session.grade}` : '');
+                    (attendance.session?.grade ? `Session ${attendance.session.grade}` : '');
                 message += `• ${formatDate(attendance.date)} ${attendance.checkInTime ? `- ${attendance.checkInTime}` : ''} ${status}`;
                 if (sessionTitle) {
                     message += `\n  └ ${sessionTitle}`;
@@ -128,12 +128,12 @@ export default function ReportsPage() {
             message += `\n`;
         }
 
-        // آخر 3 درجات
+        // Last 3 grades
         if (report.grades.length > 0) {
-            message += `📝 *آخر الدرجات:*\n`;
+            message += `📝 *Recent Grades:*\n`;
             report.grades.slice(0, 3).forEach((grade) => {
                 const percentage = grade.maxScore ? ((grade.score / grade.maxScore) * 100).toFixed(0) : '';
-                const examTitle = grade.exam?.title || 'امتحان';
+                const examTitle = grade.exam?.title || 'Exam';
                 message += `• ${examTitle}: ${grade.score}${grade.maxScore ? `/${grade.maxScore}` : ''}`;
                 if (percentage) {
                     message += ` (${percentage}%)`;
@@ -143,7 +143,7 @@ export default function ReportsPage() {
         }
 
         message += `\n━━━━━━━━━━━━━━━━━━━━\n`;
-        message += `📱 *مستر ${user?.name}*`;
+        message += `📱 *Mr. ${user?.name}*`;
         return message;
     };
 
@@ -157,8 +157,8 @@ export default function ReportsPage() {
         if (!phone) {
             showToast(
                 phoneType === 'student'
-                    ? 'لا يوجد رقم هاتف للطالب'
-                    : 'لا يوجد رقم هاتف لولي الأمر',
+                    ? 'No phone number for the student'
+                    : 'No phone number for the parent',
                 'error'
             );
             return;
@@ -181,20 +181,20 @@ export default function ReportsPage() {
             window.open(whatsappUrl, '_blank');
 
             setShowPhoneModal(false);
-            showToast('تم فتح واتساب للإرسال', 'success');
+            showToast('WhatsApp opened for sending', 'success');
         } catch (err: any) {
-            showToast('فشل في إرسال الرسالة', 'error');
+            showToast('Failed to send message', 'error');
         } finally {
             setSendingMessage(false);
         }
     };
 
     const formatCurrency = (value: number) => {
-        return `${value.toLocaleString('ar-EG')} ج.م`;
+        return `${value.toLocaleString('en-US')} EGP`;
     };
 
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('ar-EG', {
+        return new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'numeric',
             day: 'numeric',
@@ -208,11 +208,11 @@ export default function ReportsPage() {
 
     const formatDateTime = (date: string) => {
         const d = new Date(date);
-        return d.toLocaleDateString('ar-EG', {
+        return d.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'numeric',
             day: 'numeric',
-        }) + ' - ' + d.toLocaleTimeString('ar-EG', {
+        }) + ' - ' + d.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
             hour12: true,
@@ -220,9 +220,9 @@ export default function ReportsPage() {
     };
 
     return (
-        <div className="space-y-4 sm:space-y-6" dir="rtl">
+        <div className="space-y-4 sm:space-y-6" dir="ltr">
             {/* Header Section */}
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-purple-600 via-purple-500 to-purple-700 p-6 sm:p-8 text-white shadow-xl shadow-purple-500/20 animate-fade-in-up">
+            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-500 to-indigo-700 p-6 sm:p-8 text-white shadow-xl shadow-purple-500/20 animate-fade-in-up">
                 {/* Decorative Elements */}
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl hidden sm:block" />
                 <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white/8 rounded-full blur-3xl hidden sm:block" />
@@ -232,23 +232,23 @@ export default function ReportsPage() {
                         <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                             <FileText className="h-6 w-6 text-white" />
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold">التقارير الشاملة</h1>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold">Comprehensive Reports</h1>
                     </div>
-                    <p className="text-purple-50 text-sm sm:text-base">
-                        استعراض تقارير الطلاب الشاملة - الحضور والمدفوعات والدرجات
+                    <p className="text-indigo-50 text-sm sm:text-base">
+                        Review comprehensive student reports - attendance, payments, and grades
                     </p>
                 </div>
             </div>
 
             {/* Search Section */}
-            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8 animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6 sm:p-8 animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="h-14 w-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-200">
+                    <div className="h-14 w-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-200">
                         <Search className="h-7 w-7 text-white" />
                     </div>
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">البحث عن تقرير</h2>
-                        <p className="text-gray-500 text-sm mt-1">أدخل كود الطالب للحصول على تقريره الشامل</p>
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Search for Report</h2>
+                        <p className="text-gray-500 text-sm mt-1">Enter student code to get their comprehensive report</p>
                     </div>
                 </div>
 
@@ -274,26 +274,26 @@ export default function ReportsPage() {
                             const length = e.target.value.length;
                             e.target.setSelectionRange(length, length);
                         }}
-                        placeholder="أدخل كود الطالب (سيتم البحث تلقائياً)"
-                        dir="rtl"
+                        placeholder="Enter student code (auto-searches)"
+                        dir="ltr"
                         autoComplete="off"
-                        className="w-full rounded-2xl border-2 border-purple-200 bg-gray-50 py-4 pr-5 text-base text-right focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500 focus:bg-white transition-all placeholder:text-gray-400 font-medium"
-                        style={{ paddingLeft: '7.5rem' }}
+                        className="w-full rounded-2xl border-2 border-indigo-200 bg-[#FCFCFC] py-4 pl-5 text-base text-left focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-indigo-500 focus:bg-white transition-all placeholder:text-[#80848E] font-medium"
+                        style={{ paddingRight: '7.5rem' }}
                     />
                     <button
                         onClick={handleSearch}
                         disabled={loading}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95"
                     >
                         {loading ? (
                             <>
                                 <Spinner size="sm" />
-                                <span className="hidden sm:inline">جاري البحث...</span>
+                                <span className="hidden sm:inline">Searching...</span>
                             </>
                         ) : (
                             <>
                                 <Search className="h-4 w-4" />
-                                <span>بحث</span>
+                                <span>Search</span>
                             </>
                         )}
                     </button>
@@ -311,7 +311,7 @@ export default function ReportsPage() {
             {report && (
                 <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
                     {/* Student Header Card */}
-                    <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-purple-500/20 relative overflow-hidden">
+                    <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-purple-500/20 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
                         <div className="relative flex items-center justify-between">
                             <div className="flex items-center gap-4">
@@ -320,7 +320,7 @@ export default function ReportsPage() {
                                 </div>
                                 <div>
                                     <h2 className="text-2xl sm:text-3xl font-extrabold mb-1">{report.student.fullName}</h2>
-                                    <div className="flex items-center gap-2 text-purple-100">
+                                    <div className="flex items-center gap-2 text-indigo-100">
                                         <GraduationCap className="h-4 w-4" />
                                         <span className="text-sm sm:text-base">
                                             {report.student.grade}
@@ -337,7 +337,7 @@ export default function ReportsPage() {
                                     if (hasStudentPhone || hasParentPhone) {
                                         setShowPhoneModal(true);
                                     } else {
-                                        showToast('لا يوجد رقم هاتف متاح', 'error');
+                                        showToast('No phone number available', 'error');
                                     }
                                 }}
                                 disabled={sendingMessage || (!report.student.parentPhone && !(report.student as any).studentPhone)}
@@ -346,12 +346,12 @@ export default function ReportsPage() {
                                 {sendingMessage ? (
                                     <>
                                         <Spinner size="sm" />
-                                        <span>جاري الإرسال...</span>
+                                        <span>Sending...</span>
                                     </>
                                 ) : (
                                     <>
                                         <MessageSquare className="h-5 w-5" />
-                                        <span>إرسال عبر واتساب</span>
+                                        <span>Send via WhatsApp</span>
                                     </>
                                 )}
                             </button>
@@ -365,21 +365,21 @@ export default function ReportsPage() {
                                 if (hasStudentPhone || hasParentPhone) {
                                     setShowPhoneModal(true);
                                 } else {
-                                    showToast('لا يوجد رقم هاتف متاح', 'error');
+                                    showToast('No phone number available', 'error');
                                 }
                             }}
                             disabled={sendingMessage || (!report.student.parentPhone && !report.student.studentPhone)}
                             className="sm:hidden mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-white/30"
                         >
                             {sendingMessage ? (
-                                <>
+                                        <>
                                     <Spinner size="sm" />
-                                    <span>جاري الإرسال...</span>
+                                    <span>Sending...</span>
                                 </>
                             ) : (
                                 <>
                                     <MessageSquare className="h-5 w-5" />
-                                    <span>إرسال عبر واتساب</span>
+                                    <span>Send via WhatsApp</span>
                                 </>
                             )}
                         </button>
@@ -387,45 +387,45 @@ export default function ReportsPage() {
 
                     {/* Statistics Cards */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-indigo-200 shadow-xl hover:shadow-2xl transition-shadow">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="h-12 w-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                                <div className="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
                                     <CheckCircle2 className="h-6 w-6 text-white" />
                                 </div>
                             </div>
-                            <p className="text-xs text-purple-700 font-medium mb-1">أيام الحضور</p>
-                            <p className="text-2xl sm:text-3xl font-extrabold text-purple-900">{report.statistics.presentCount}</p>
+                            <p className="text-xs text-indigo-700 font-medium mb-1">Present Days</p>
+                            <p className="text-2xl sm:text-3xl font-extrabold text-indigo-900">{report.statistics.presentCount}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-indigo-200 shadow-xl hover:shadow-2xl transition-shadow">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="h-12 w-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                                <div className="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
                                     <BookOpen className="h-6 w-6 text-white" />
                                 </div>
                             </div>
-                            <p className="text-xs text-purple-700 font-medium mb-1">الامتحانات</p>
-                            <p className="text-2xl sm:text-3xl font-extrabold text-purple-900">{report.statistics.totalExams}</p>
+                            <p className="text-xs text-indigo-700 font-medium mb-1">Exams</p>
+                            <p className="text-2xl sm:text-3xl font-extrabold text-indigo-900">{report.statistics.totalExams}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-indigo-200 shadow-xl hover:shadow-2xl transition-shadow">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="h-12 w-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                                <div className="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
                                     <Wallet className="h-6 w-6 text-white" />
                                 </div>
                             </div>
-                            <p className="text-xs text-purple-700 font-medium mb-1">الخدمات الإضافية</p>
-                            <p className="text-2xl sm:text-3xl font-extrabold text-purple-900">{report.statistics.totalAdditionalServices}</p>
+                            <p className="text-xs text-indigo-700 font-medium mb-1">Additional Services</p>
+                            <p className="text-2xl sm:text-3xl font-extrabold text-indigo-900">{report.statistics.totalAdditionalServices}</p>
                         </div>
 
                         {report.statistics.averageGrade && report.statistics.averageGrade > 0 && (
-                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-indigo-200 shadow-xl hover:shadow-2xl transition-shadow">
                                 <div className="flex items-center justify-between mb-3">
-                                    <div className="h-12 w-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                                    <div className="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
                                         <TrendingUp className="h-6 w-6 text-white" />
                                     </div>
                                 </div>
-                                <p className="text-xs text-purple-700 font-medium mb-1">المتوسط</p>
-                                <p className="text-2xl sm:text-3xl font-extrabold text-purple-900">{report.statistics.averageGrade.toFixed(1)}</p>
+                                <p className="text-xs text-indigo-700 font-medium mb-1">Average</p>
+                                <p className="text-2xl sm:text-3xl font-extrabold text-indigo-900">{report.statistics.averageGrade.toFixed(1)}</p>
                             </div>
                         )}
                     </div>
@@ -433,21 +433,21 @@ export default function ReportsPage() {
                     {/* Financial Summary */}
                     {(report.statistics.totalPaid > 0 || report.statistics.totalPending > 0) && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200 shadow-sm">
+                            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200 shadow-xl">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="h-10 w-10 bg-green-500 rounded-xl flex items-center justify-center">
                                         <Wallet className="h-5 w-5 text-white" />
                                     </div>
-                                    <p className="text-sm font-bold text-green-700">المدفوع</p>
+                                    <p className="text-sm font-bold text-green-700">Paid</p>
                                 </div>
                                 <p className="text-3xl font-extrabold text-green-900">{formatCurrency(report.statistics.totalPaid)}</p>
                             </div>
-                            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border border-orange-200 shadow-sm">
+                            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border border-orange-200 shadow-xl">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="h-10 w-10 bg-orange-500 rounded-xl flex items-center justify-center">
                                         <Wallet className="h-5 w-5 text-white" />
                                     </div>
-                                    <p className="text-sm font-bold text-orange-700">المعلق</p>
+                                    <p className="text-sm font-bold text-orange-700">Pending</p>
                                 </div>
                                 <p className="text-3xl font-extrabold text-orange-900">{formatCurrency(report.statistics.totalPending)}</p>
                             </div>
@@ -459,20 +459,20 @@ export default function ReportsPage() {
                         {/* Left Column */}
                         <div className="space-y-6">
                             {/* Attendance Log */}
-                            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
+                            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="h-10 w-10 bg-emerald-100 rounded-xl flex items-center justify-center">
                                         <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                                     </div>
-                                    <h3 className="text-lg font-extrabold text-gray-900">سجل الحضور</h3>
+                                    <h3 className="text-lg font-extrabold text-gray-900">Attendance Log</h3>
                                 </div>
                                 {report.attendances.length > 0 ? (
                                     <div className="space-y-3">
                                         {report.attendances.slice(0, 10).map((attendance) => (
-                                            <div key={attendance.id} className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-100">
+                                            <div key={attendance.id} className="p-4 bg-[#FCFCFC] rounded-xl hover:bg-gray-100 transition-colors border border-gray-200">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <div className="flex items-center gap-3">
-                                                        <Calendar className="h-4 w-4 text-gray-400" />
+                                                        <Calendar className="h-4 w-4 text-[#80848E]" />
                                                         <div>
                                                             <p className="text-sm font-semibold text-gray-900">{formatDate(attendance.date)}</p>
                                                             {attendance.checkInTime && (
@@ -486,14 +486,14 @@ export default function ReportsPage() {
                                                             ? 'bg-red-100 text-red-700'
                                                             : 'bg-amber-100 text-amber-700'
                                                         }`}>
-                                                        {attendance.status === 'present' ? 'حاضر' : attendance.status === 'absent' ? 'غائب' : 'متأخر'}
+                                                        {attendance.status === 'present' ? 'Present' : attendance.status === 'absent' ? 'Absent' : 'Late'}
                                                     </span>
                                                 </div>
                                                 {attendance.session && (
                                                     <div className="mt-2 pt-2 border-t border-gray-200">
-                                                        <p className="text-xs text-gray-500 mb-1">عنوان الجلسة:</p>
-                                                        <p className="text-sm font-bold text-purple-700">
-                                                            {attendance.session.title || `جلسة ${attendance.session.grade || ''}`}
+                                                        <p className="text-xs text-gray-500 mb-1">Session Title:</p>
+                                                        <p className="text-sm font-bold text-indigo-700">
+                                                            {attendance.session.title || `Session ${attendance.session.grade || ''}`}
                                                         </p>
                                                     </div>
                                                 )}
@@ -503,28 +503,28 @@ export default function ReportsPage() {
                                 ) : (
                                     <div className="text-center py-8">
                                         <CheckCircle2 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                                        <p className="text-gray-500">لا توجد سجلات حضور</p>
+                                        <p className="text-gray-500">No attendance records</p>
                                     </div>
                                 )}
                             </div>
 
                             {/* Additional Services */}
-                            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
+                            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="h-10 w-10 bg-amber-100 rounded-xl flex items-center justify-center">
                                         <Wallet className="h-5 w-5 text-amber-600" />
                                     </div>
-                                    <h3 className="text-lg font-extrabold text-gray-900">الخدمات الإضافية</h3>
+                                    <h3 className="text-lg font-extrabold text-gray-900">Additional Services</h3>
                                 </div>
                                 {report.additionalServices && report.additionalServices.length > 0 ? (
                                     <div className="space-y-3">
                                         {report.additionalServices.map((service) => (
-                                            <div key={service.id} className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-100">
+                                            <div key={service.id} className="p-4 bg-[#FCFCFC] rounded-xl hover:bg-gray-100 transition-colors border border-gray-200">
                                                 <p className="font-bold text-gray-900 mb-1">
-                                                    {typeof service.service === 'object' ? service.service.name : 'خدمة'}
+                                                    {typeof service.service === 'object' ? service.service.name : 'Service'}
                                                 </p>
                                                 {service.notes && (
-                                                    <p className="text-sm text-gray-600">{service.notes}</p>
+                                                    <p className="text-sm text-gray-500">{service.notes}</p>
                                                 )}
                                             </div>
                                         ))}
@@ -532,7 +532,7 @@ export default function ReportsPage() {
                                 ) : (
                                     <div className="text-center py-8">
                                         <Wallet className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                                        <p className="text-gray-500">لا توجد خدمات إضافية</p>
+                                        <p className="text-gray-500">No additional services</p>
                                     </div>
                                 )}
                             </div>
@@ -541,55 +541,55 @@ export default function ReportsPage() {
                         {/* Right Column */}
                         <div className="space-y-6">
                             {/* Personal Information */}
-                            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
+                            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="h-10 w-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                                        <User className="h-5 w-5 text-purple-600" />
+                                    <div className="h-10 w-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                                        <User className="h-5 w-5 text-indigo-600" />
                                     </div>
-                                    <h3 className="text-lg font-extrabold text-gray-900">المعلومات الشخصية</h3>
+                                    <h3 className="text-lg font-extrabold text-gray-900">Personal Information</h3>
                                 </div>
                                 <div className="space-y-4">
                                     {report.student.parentPhone && (
-                                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                            <Phone className="h-5 w-5 text-gray-400" />
+                                        <div className="flex items-center gap-3 p-3 bg-[#FCFCFC] rounded-xl">
+                                            <Phone className="h-5 w-5 text-[#80848E]" />
                                             <div>
-                                                <p className="text-xs text-gray-500 mb-1">هاتف ولي الأمر</p>
+                                                <p className="text-xs text-gray-500 mb-1">Parent's Phone</p>
                                                 <p className="text-sm font-bold text-gray-900">{report.student.parentPhone}</p>
                                             </div>
                                         </div>
                                     )}
                                     {report.student.studentPhone && (
-                                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                            <Phone className="h-5 w-5 text-gray-400" />
+                                        <div className="flex items-center gap-3 p-3 bg-[#FCFCFC] rounded-xl">
+                                            <Phone className="h-5 w-5 text-[#80848E]" />
                                             <div>
-                                                <p className="text-xs text-gray-500 mb-1">هاتف الطالب</p>
+                                                <p className="text-xs text-gray-500 mb-1">Student's Phone</p>
                                                 <p className="text-sm font-bold text-gray-900">
                                                     {report.student.studentPhone}
                                                 </p>
                                             </div>
                                         </div>
                                     )}
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                        <GraduationCap className="h-5 w-5 text-gray-400" />
+                                    <div className="flex items-center gap-3 p-3 bg-[#FCFCFC] rounded-xl">
+                                        <GraduationCap className="h-5 w-5 text-[#80848E]" />
                                         <div>
-                                            <p className="text-xs text-gray-500 mb-1">الصف الدراسي</p>
+                                            <p className="text-xs text-gray-500 mb-1">Grade / Year</p>
                                             <p className="text-sm font-bold text-gray-900">{report.student.grade}</p>
                                         </div>
                                     </div>
                                     {report.student.classroom && (
-                                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                            <Sparkles className="h-5 w-5 text-gray-400" />
+                                        <div className="flex items-center gap-3 p-3 bg-[#FCFCFC] rounded-xl">
+                                            <Sparkles className="h-5 w-5 text-[#80848E]" />
                                             <div>
-                                                <p className="text-xs text-gray-500 mb-1">السنتر</p>
+                                                <p className="text-xs text-gray-500 mb-1">Center</p>
                                                 <p className="text-sm font-bold text-gray-900">{report.student.classroom}</p>
                                             </div>
                                         </div>
                                     )}
                                     {report.student.monthlyFee && report.student.monthlyFee > 0 && (
-                                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                            <Wallet className="h-5 w-5 text-gray-400" />
+                                        <div className="flex items-center gap-3 p-3 bg-[#FCFCFC] rounded-xl">
+                                            <Wallet className="h-5 w-5 text-[#80848E]" />
                                             <div>
-                                                <p className="text-xs text-gray-500 mb-1">الاشتراك الشهري</p>
+                                                <p className="text-xs text-gray-500 mb-1">Monthly Fee</p>
                                                 <p className="text-sm font-bold text-gray-900">{formatCurrency(report.student.monthlyFee)}</p>
                                             </div>
                                         </div>
@@ -598,23 +598,23 @@ export default function ReportsPage() {
                             </div>
 
                             {/* Exam Grades */}
-                            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
+                            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
                                         <BookOpen className="h-5 w-5 text-blue-600" />
                                     </div>
-                                    <h3 className="text-lg font-extrabold text-gray-900">درجات الامتحانات</h3>
+                                    <h3 className="text-lg font-extrabold text-gray-900">Exam Grades</h3>
                                 </div>
                                 {report.grades.length > 0 ? (
                                     <div className="space-y-4">
                                         {report.grades.map((grade) => {
                                             const percentage = grade.maxScore ? (grade.score / grade.maxScore) * 100 : 0;
                                             return (
-                                                <div key={grade.id} className="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors">
+                                                <div key={grade.id} className="p-4 bg-[#FCFCFC] rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors">
                                                     <div className="flex items-center justify-between mb-3">
                                                         <div>
                                                             <p className="text-sm font-bold text-gray-900 mb-1">
-                                                                {grade.exam?.title || 'امتحان'}
+                                                                {grade.exam?.title || 'Exam'}
                                                             </p>
                                                             <p className="text-xs text-gray-500">
                                                                 {formatDateTime(grade.createdAt)}
@@ -649,7 +649,7 @@ export default function ReportsPage() {
                                 ) : (
                                     <div className="text-center py-8">
                                         <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                                        <p className="text-gray-500">لا توجد درجات مسجلة</p>
+                                        <p className="text-gray-500">No grades recorded</p>
                                     </div>
                                 )}
                             </div>
@@ -667,35 +667,35 @@ export default function ReportsPage() {
                     <div
                         className="bg-white rounded-3xl shadow-2xl relative max-w-md w-full p-6 animate-in zoom-in-95 duration-300"
                         onClick={(e) => e.stopPropagation()}
-                        dir="rtl"
+                        dir="ltr"
                     >
                         <button
                             onClick={() => setShowPhoneModal(false)}
-                            className="absolute top-4 left-4 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="absolute top-4 right-4 text-[#80848E] hover:text-gray-500 transition-colors"
                         >
                             <X className="w-6 h-6" />
                         </button>
 
                         <div className="mb-6">
-                            <h3 className="text-2xl font-extrabold text-gray-900 mb-2">اختر رقم الإرسال</h3>
-                            <p className="text-gray-500 text-sm">اختر الرقم الذي تريد إرسال التقرير إليه</p>
+                            <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Select Sending Number</h3>
+                            <p className="text-gray-500 text-sm">Select the number you want to send the report to</p>
                         </div>
 
                         <div className="space-y-3">
                             <button
                                 onClick={() => handleSendToWhatsApp('student')}
                                 disabled={sendingMessage || !report.student.studentPhone}
-                                className="w-full p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl hover:border-purple-400 hover:from-purple-100 hover:to-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-right"
+                                className="w-full p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 hover:from-purple-100 hover:to-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${report.student.studentPhone ? 'bg-purple-600' : 'bg-gray-300'}`}>
+                                        <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${report.student.studentPhone ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                                             <Phone className="h-6 w-6 text-white" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-900">هاتف الطالب</p>
-                                            <p className={`text-sm ${report.student.studentPhone ? 'text-gray-600' : 'text-gray-400'}`}>
-                                                {report.student.studentPhone || 'غير متاح'}
+                                            <p className="font-bold text-gray-900">Student's Phone</p>
+                                            <p className={`text-sm ${report.student.studentPhone ? 'text-gray-500' : 'text-[#80848E]'}`}>
+                                                {report.student.studentPhone || 'Not Available'}
                                             </p>
                                         </div>
                                     </div>
@@ -706,17 +706,17 @@ export default function ReportsPage() {
                             <button
                                 onClick={() => handleSendToWhatsApp('parent')}
                                 disabled={sendingMessage || !report.student.parentPhone}
-                                className="w-full p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl hover:border-purple-400 hover:from-purple-100 hover:to-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-right"
+                                className="w-full p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 hover:from-purple-100 hover:to-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${report.student.parentPhone ? 'bg-purple-600' : 'bg-gray-300'}`}>
+                                        <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${report.student.parentPhone ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                                             <User className="h-6 w-6 text-white" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-900">رقم ولي الأمر</p>
-                                            <p className={`text-sm ${report.student.parentPhone ? 'text-gray-600' : 'text-gray-400'}`}>
-                                                {report.student.parentPhone || 'غير متاح'}
+                                            <p className="font-bold text-gray-900">Parent's Phone</p>
+                                            <p className={`text-sm ${report.student.parentPhone ? 'text-gray-500' : 'text-[#80848E]'}`}>
+                                                {report.student.parentPhone || 'Not Available'}
                                             </p>
                                         </div>
                                     </div>

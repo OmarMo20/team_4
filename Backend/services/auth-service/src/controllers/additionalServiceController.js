@@ -13,7 +13,7 @@ exports.createServiceRequest = async (req, res, next) => {
         const { studentId, serviceName, price, notes } = req.body;
 
         if (!studentId || !serviceName || price === undefined) {
-            throw new ApiError('من فضلك أدخل بيانات الخدمة كاملة', 400);
+            throw new ApiError('Please enter full service details', 400);
         }
 
         // 1. Find or create the service type for this teacher
@@ -33,7 +33,7 @@ exports.createServiceRequest = async (req, res, next) => {
         // 2. Verify student exists and belongs to teacher
         const student = await Student.findById(studentId);
         if (!student || !belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('الطالب غير موجود أو غير تابع لك', 404);
+            throw new ApiError('Student not found or does not belong to you', 404);
         }
 
         // 3. Create the service request
@@ -47,7 +47,7 @@ exports.createServiceRequest = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'تم إضافة الخدمة بنجاح',
+            message: 'Service added successfully',
             data: serviceRequest
         });
     } catch (error) {
@@ -89,14 +89,14 @@ exports.deleteServiceRequest = async (req, res, next) => {
         const serviceRequest = await ServiceRequest.findOne(scopeQuery({ _id: id }, req.teacherId));
 
         if (!serviceRequest) {
-            throw new ApiError('الخدمة غير موجودة أو غير تابع لك', 404);
+            throw new ApiError('Service not found or does not belong to you', 404);
         }
 
         await ServiceRequest.findByIdAndDelete(id);
 
         res.status(200).json({
             success: true,
-            message: 'تم حذف الخدمة بنجاح'
+            message: 'Service deleted successfully'
         });
     } catch (error) {
         next(error);

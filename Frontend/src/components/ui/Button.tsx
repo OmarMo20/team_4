@@ -35,10 +35,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         `;
 
         const variants = {
-            primary: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 shadow-md',
+            primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-2xl',
             secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500',
-            outline: 'border-2 border-purple-600 text-purple-600 hover:bg-purple-50 focus:ring-purple-500',
-            ghost: 'text-purple-600 hover:bg-purple-50 focus:ring-purple-500',
+            outline: 'border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-500',
+            ghost: 'text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-500',
         };
 
         const sizes = {
@@ -57,7 +57,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 {isLoading ? (
                     <>
                         <Spinner size="sm" className="mr-2" />
-                        <span>جاري التحميل...</span>
+                        <span>Loading...</span>
                     </>
                 ) : (
                     <>

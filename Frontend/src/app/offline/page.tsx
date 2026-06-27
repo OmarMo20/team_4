@@ -53,14 +53,10 @@ export default function OfflinePage() {
     // If no intended path but user is on /offline page, try to redirect to attendance page
     // This handles cases where Service Worker redirected to /offline but we want to show attendance
     if (!intendedPath) {
-      // Check if we can access attendance page from cache
-      // If user clicked "الانتقال إلى صفحة الحضور" or page loaded, try to go to attendance
       const shouldRedirectToAttendance = true; // Always try to redirect to attendance if on /offline
       
       if (shouldRedirectToAttendance) {
-        // Try to redirect to attendance page - it should be cached
         console.log('🔄 Auto-redirecting to attendance page from /offline');
-        // Use replace instead of push to avoid adding /offline to history
         router.replace('/dashboard/attendance');
         return;
       }
@@ -96,12 +92,12 @@ export default function OfflinePage() {
   }, [isOnline, router, intendedPath]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4" dir="ltr text-left">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
         <div className="mb-6">
           <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
             <svg
-              className="w-12 h-12 text-gray-400"
+              className="w-12 h-12 text-[#80848E]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -116,46 +112,46 @@ export default function OfflinePage() {
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-800 mb-4 font-cairo">
-          أنت غير متصل بالإنترنت
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          You are offline
         </h1>
 
-        <p className="text-gray-600 mb-6 font-cairo">
-          لا يوجد اتصال بالإنترنت حالياً. يمكنك الاستمرار في تسجيل الحضور وسيتم مزامنة البيانات تلقائياً عند عودة الاتصال.
+        <p className="text-gray-500 mb-6">
+          No internet connection. You can continue recording attendance and data will sync automatically once connection is restored.
         </p>
 
         {isOnline ? (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-            <p className="text-green-700 font-cairo">
-              ✓ تم استعادة الاتصال! سيتم إعادة التوجيه قريباً...
+            <p className="text-green-700">
+              ✓ Connection restored! Redirecting shortly...
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-blue-700 text-sm font-cairo">
-                💡 يمكنك الاستمرار في استخدام التطبيق في وضع عدم الاتصال
+              <p className="text-blue-700 text-sm">
+                💡 You can continue using the app in offline mode
               </p>
             </div>
 
             <button
               onClick={() => router.push('/dashboard/attendance')}
-              className="w-full bg-[#414141] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#333] transition-colors font-cairo"
+              className="w-full bg-[#414141] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#333] transition-colors"
             >
-              الانتقال إلى صفحة الحضور
+              Go to Attendance Page
             </button>
 
             <button
               onClick={() => router.back()}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors font-cairo"
+              className="w-full bg-gray-100 text-[#DBDEE1] py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
             >
-              العودة للخلف
+              Go Back
             </button>
           </div>
         )}
 
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 font-cairo">
+          <p className="text-xs text-gray-500">
             Teacher Attendance System - PWA
           </p>
         </div>
@@ -163,4 +159,3 @@ export default function OfflinePage() {
     </div>
   );
 }
-

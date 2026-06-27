@@ -45,19 +45,19 @@ export default function SyncProgressModal({
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-in fade-in duration-200"
       onClick={onClose}
-      dir="rtl"
+      dir="ltr"
     >
       <div
-        className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col animate-in slide-in-from-bottom-4 duration-300"
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col animate-in slide-in-from-bottom-4 duration-300 text-left"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 font-cairo">
-            مزامنة البيانات
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between text-left">
+          <h2 className="text-xl font-bold text-gray-900">
+            Data Sync
           </h2>
           {!allCompleted && (
-            <Loader2 className="w-5 h-5 text-purple-600 animate-spin" />
+            <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
           )}
         </div>
 
@@ -65,17 +65,17 @@ export default function SyncProgressModal({
         <div className="p-6 pb-4">
           {!allCompleted ? (
             <>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700 font-cairo">
-                  جارٍ رفع البيانات...
+              <div className="flex items-center justify-between mb-2 text-left">
+                <span className="text-sm font-medium text-[#DBDEE1]">
+                  Uploading data...
                 </span>
-                <span className="text-sm font-bold text-purple-600 font-cairo">
+                <span className="text-sm font-bold text-indigo-600">
                   {completedCount + failedCount} / {totalActions}
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                 <div
-                  className="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                  className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -84,13 +84,13 @@ export default function SyncProgressModal({
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 {completedCount > 0 && (
-                  <span className="text-lg font-bold text-green-600 font-cairo">
-                    ✓ {completedCount} من {totalActions} نجح
+                  <span className="text-lg font-bold text-green-600">
+                    ✓ {completedCount} of {totalActions} succeeded
                   </span>
                 )}
                 {completedCount === 0 && failedCount > 0 && (
-                  <span className="text-lg font-bold text-red-600 font-cairo">
-                    ✗ {failedCount} من {totalActions} فشل
+                  <span className="text-lg font-bold text-red-600">
+                    ✗ {failedCount} of {totalActions} failed
                   </span>
                 )}
               </div>
@@ -100,10 +100,10 @@ export default function SyncProgressModal({
 
         {/* Failed Actions Details */}
         {allCompleted && failedCount > 0 && (
-          <div className="flex-1 overflow-y-auto px-6 pb-4">
+          <div className="flex-1 overflow-y-auto px-6 pb-4 text-left">
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
-              <p className="text-sm font-bold text-red-800 mb-3 font-cairo">
-                الطلاب الذين لم يتم تسجيلهم:
+              <p className="text-sm font-bold text-red-800 mb-3">
+                Students who could not be registered:
               </p>
               <div className="space-y-2">
                 {actions
@@ -113,11 +113,11 @@ export default function SyncProgressModal({
                       key={action.id}
                       className="bg-white rounded-lg p-3 border border-red-200"
                     >
-                      <p className="text-sm font-medium text-gray-900 font-cairo">
-                        الطالب بالكود: <span className="font-bold">{action.studentCode}</span>
+                      <p className="text-sm font-medium text-gray-900">
+                        Student Code: <span className="font-bold">{action.studentCode}</span>
                       </p>
                       {action.error && (
-                        <p className="text-xs text-red-600 mt-1 font-cairo">
+                        <p className="text-xs text-red-600 mt-1">
                           {action.error}
                         </p>
                       )}
@@ -128,14 +128,14 @@ export default function SyncProgressModal({
           </div>
         )}
 
-        {/* OK Button - Always visible when completed */}
+        {/* OK Button */}
         {allCompleted && (
-          <div className="p-6 border-t border-gray-100 bg-gray-50">
+          <div className="p-6 border-t border-gray-200 bg-[#FCFCFC] text-left">
             <button
               onClick={onClose}
-              className="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors font-cairo"
+              className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors"
             >
-              موافق
+              OK
             </button>
           </div>
         )}
@@ -143,4 +143,3 @@ export default function SyncProgressModal({
     </div>
   );
 }
-

@@ -138,14 +138,14 @@ const OTPInput = ({
                             text-center text-base xs:text-lg sm:text-xl font-semibold
                             bg-white
                             border-2 rounded-lg sm:rounded-xl
-                            focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400
+                            focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-indigo-400
                             transition-all duration-200
                             disabled:bg-gray-100 disabled:cursor-not-allowed
                             ${error
                                 ? 'border-red-400 focus:ring-red-400'
                                 : digit
-                                    ? 'border-purple-400'
-                                    : 'border-gray-200 hover:border-gray-300'
+                                    ? 'border-indigo-400'
+                                    : 'border-gray-200 hover:border-[#35373C]'
                             }
                         `}
                     />

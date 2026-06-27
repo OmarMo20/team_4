@@ -110,7 +110,7 @@ exports.createSession = async (req, res, next) => {
 
         // Validate required fields
         if (!date || !startTime || !grade) {
-            throw new ApiError('من فضلك أدخل التاريخ ووقت البداية والصف الدراسي', 400);
+            throw new ApiError('Please enter date, start time, and grade', 400);
         }
 
 
@@ -191,7 +191,7 @@ exports.getSessionById = async (req, res, next) => {
             .lean();
 
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         // Multi-Tenant: Ensure session belongs to authenticated teacher
@@ -205,11 +205,11 @@ exports.getSessionById = async (req, res, next) => {
         }
         
         if (!sessionTeacherId) {
-            throw new ApiError('الجلسة غير مرتبطة بمعلم', 403);
+            throw new ApiError('Session is not associated with a teacher', 403);
         }
         
         if (!req.teacherId) {
-            throw new ApiError('غير مسموح - يجب تسجيل الدخول كمعلم', 403);
+            throw new ApiError('Unauthorized - must login as teacher', 403);
         }
         
         // Convert both to strings for comparison (handles ObjectId objects)
@@ -217,7 +217,7 @@ exports.getSessionById = async (req, res, next) => {
         const reqTeacherIdStr = req.teacherId.toString ? req.teacherId.toString() : String(req.teacherId);
         
         if (sessionTeacherIdStr !== reqTeacherIdStr) {
-            throw new ApiError('غير مسموح لك بالوصول إلى هذه الجلسة', 403);
+            throw new ApiError('You are not allowed to access this session', 403);
         }
 
         // Multi-Tenant: Get attendance count scoped by teacherId
@@ -248,12 +248,12 @@ exports.getSessionAttendance = async (req, res, next) => {
         const session = await Session.findById(req.params.id);
 
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         // Multi-Tenant: Ensure session belongs to authenticated teacher
         if (!belongsToTenant(session, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بعرض حضور هذه الجلسة', 403);
+            throw new ApiError('You are not allowed to view the attendance of this session', 403);
         }
 
         // Multi-Tenant: Get attendance scoped by teacherId (all statuses, not just 'present')
@@ -285,18 +285,18 @@ exports.addAttendanceByCode = async (req, res, next) => {
         const { studentCode } = req.body;
 
         if (!studentCode) {
-            throw new ApiError('من فضلك أدخل كود الطالب', 400);
+            throw new ApiError('Please enter student code', 400);
         }
 
         // Find session and ensure it exists
         const session = await Session.findById(req.params.id);
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         // Multi-Tenant: Ensure the session belongs to the authenticated teacher
         if (!belongsToTenant(session, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بتسجيل حضور لهذه الجلسة', 403);
+            throw new ApiError('You are not allowed to register attendance for this session', 403);
         }
 
         // Multi-Tenant: Find student by code and teacherId
@@ -305,7 +305,7 @@ exports.addAttendanceByCode = async (req, res, next) => {
         );
 
         if (!student) {
-            throw new ApiError('لم يتم العثور على طالب بهذا الكود', 404);
+            throw new ApiError('No student found with this code', 404);
         }
 
         // Multi-Tenant: Check if attendance already exists
@@ -313,7 +313,7 @@ exports.addAttendanceByCode = async (req, res, next) => {
             scopeQuery({ student: student._id, session: session._id }, req.teacherId)
         );
         if (attendance) {
-            throw new ApiError('تم تسجيل هذا الطالب في هذه الجلسة من قبل', 400);
+            throw new ApiError('This student is already registered in this session', 400);
         }
 
         // Multi-Tenant: Create attendance record with teacherId
@@ -334,7 +334,7 @@ exports.addAttendanceByCode = async (req, res, next) => {
         } catch (error) {
             // Handle duplicate attendance (unique index on teacherId + student + session)
             if (error && error.code === 11000) {
-                return next(new ApiError('تم تسجيل حضور هذا الطالب في هذه الجلسة من قبل', 400));
+                return next(new ApiError('This student\'s attendance is already registered in this session', 400));
             }
             throw error;
         }
@@ -369,12 +369,12 @@ exports.removeAttendance = async (req, res, next) => {
 
         const session = await Session.findById(sessionId);
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         // Multi-Tenant: Ensure the session belongs to the authenticated teacher
         if (!belongsToTenant(session, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بتعديل حضور هذه الجلسة', 403);
+            throw new ApiError('You are not allowed to edit the attendance of this session', 403);
         }
 
         // Multi-Tenant: Delete attendance with teacherId scope
@@ -383,7 +383,7 @@ exports.removeAttendance = async (req, res, next) => {
         );
 
         if (!attendance) {
-            throw new ApiError('لم يتم العثور على سجل الحضور', 404);
+            throw new ApiError('Attendance record not found', 404);
         }
 
         // Recalculate attendance count for the session
@@ -393,7 +393,7 @@ exports.removeAttendance = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم إلغاء حضور الطالب بنجاح',
+            message: 'Student attendance cancelled successfully',
             data: {
                 attendanceId,
                 attendanceCount
@@ -415,26 +415,26 @@ exports.updateAttendanceStatus = async (req, res, next) => {
         const { id: sessionId, attendanceId } = req.params;
 
         if (!status || !['paid', 'unpaid'].includes(status)) {
-            throw new ApiError('يرجى اختيار حالة صحيحة (paid | unpaid)', 400);
+            throw new ApiError('Please select a valid status (paid | unpaid)', 400);
         }
 
         const session = await Session.findById(sessionId);
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
         if (!belongsToTenant(session, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بتعديل حضور هذه الجلسة', 403);
+            throw new ApiError('You are not allowed to edit the attendance of this session', 403);
         }
 
         const attendance = await Attendance.findById(attendanceId).populate('student', 'fullName nationalId');
         if (!attendance) {
-            throw new ApiError('لم يتم العثور على سجل الحضور', 404);
+            throw new ApiError('Attendance record not found', 404);
         }
         if (!belongsToTenant(attendance, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بتعديل هذا الحضور', 403);
+            throw new ApiError('You are not allowed to edit this attendance', 403);
         }
         if (attendance.session.toString() !== sessionId.toString()) {
-            throw new ApiError('هذا الحضور لا ينتمي لهذه الجلسة', 400);
+            throw new ApiError('This attendance does not belong to this session', 400);
         }
 
         if (status === 'paid') {
@@ -454,7 +454,7 @@ exports.updateAttendanceStatus = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم تحديث حالة الطالب',
+            message: 'Student status updated',
             data: {
                 attendance: {
                     id: attendance.id,
@@ -483,12 +483,12 @@ exports.updateSessionStatus = async (req, res, next) => {
         const { status } = req.body;
 
         if (!status) {
-            throw new ApiError('من فضلك اختر حالة للجلسة', 400);
+            throw new ApiError('Please select a session status', 400);
         }
 
         const validStatuses = ['scheduled', 'in-progress', 'completed', 'cancelled'];
         if (!validStatuses.includes(status)) {
-            throw new ApiError('قيمة الحالة غير صحيحة', 400);
+            throw new ApiError('Invalid status value', 400);
         }
 
         // Multi-Tenant: Update with teacherId scope
@@ -499,7 +499,7 @@ exports.updateSessionStatus = async (req, res, next) => {
         ).populate('teacherId', 'name email');
 
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         res.status(200).json({
@@ -527,7 +527,7 @@ exports.endSession = async (req, res, next) => {
         ).populate('teacherId', 'name email');
 
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         res.status(200).json({
@@ -554,7 +554,7 @@ exports.deleteSession = async (req, res, next) => {
         );
 
         if (!session) {
-            throw new ApiError('لم يتم العثور على الجلسة', 404);
+            throw new ApiError('Session not found', 404);
         }
 
         // Multi-Tenant: Delete related attendance records
@@ -607,7 +607,7 @@ exports.getRecentAttendance = async (req, res, next) => {
             name: attendance.student?.fullName || '',
             checkIn: attendance.checkInTime || new Date(attendance.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
             checkOut: attendance.checkOutTime || '-',
-            status: attendance.status === 'present' ? 'حاضر' : 'غائب',
+            status: attendance.status === 'present' ? 'Present' : 'Absent',
             createdAt: attendance.createdAt
         }));
 

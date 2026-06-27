@@ -1,7 +1,7 @@
 {
   "name": "Teacher Attendance System",
   "short_name": "Attendance",
-  "description": "نظام إدارة الفصول الدراسية والحضور",
+  "description": "Classroom and Attendance Management System",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -23,8 +23,7 @@
     }
   ],
   "categories": ["education", "productivity"],
-  "lang": "ar",
-  "dir": "rtl",
+  "lang": "en",
+  "dir": "ltr",
   "prefer_related_applications": false
 }
-

@@ -13,7 +13,7 @@ const register = catchAsync(async (req, res) => {
 
     if (existingUser) {
         if (existingUser.isVerified) {
-            throw ApiError.conflict('هذا البريد مسجَّل بالفعل');
+            throw ApiError.conflict('This email is already registered');
         }
         // Delete unverified user to allow re-registration
         await User.deleteOne({ _id: existingUser._id });
@@ -45,7 +45,7 @@ const register = catchAsync(async (req, res) => {
 
     res.status(201).json({
         success: true,
-        message: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
+        message: 'Verification code sent to your email',
         data: {
             email: user.email,
         },
@@ -59,13 +59,13 @@ const verifyOTP = catchAsync(async (req, res) => {
     const otpDoc = await OTP.verifyOTP(email.toLowerCase(), otp, 'registration');
 
     if (!otpDoc) {
-        throw ApiError.badRequest('رمز التحقق غير صحيح أو منتهي الصلاحية');
+        throw ApiError.badRequest('Verification code is incorrect or expired');
     }
 
     // Activate user
     let user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-        throw ApiError.notFound('المستخدم غير موجود');
+        throw ApiError.notFound('User not found');
     }
     
     user.isVerified = true;
@@ -77,7 +77,7 @@ const verifyOTP = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم تفعيل البريد الإلكتروني بنجاح',
+        message: 'Email verified successfully',
         data: {
             user,
             token,
@@ -93,7 +93,7 @@ const resendOTP = catchAsync(async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-        throw ApiError.notFound('المستخدم غير موجود');
+        throw ApiError.notFound('User not found');
     }
 
     if (type === 'registration' && user.isVerified) {
@@ -111,7 +111,7 @@ const resendOTP = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم إرسال رمز التحقق بنجاح',
+        message: 'Verification code sent successfully',
     });
 });
 
@@ -159,7 +159,7 @@ const forgotPassword = catchAsync(async (req, res) => {
     if (!user) {
         res.status(200).json({
             success: true,
-            message: 'هذا البريد الإلكتروني غير مسجَّل',
+            message: 'This email address is not registered',
         });
         return;
     }
@@ -170,7 +170,7 @@ const forgotPassword = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
+        message: 'Verification code sent to your email',
     });
 });
 
@@ -187,7 +187,7 @@ const validateOTP = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'رمز التحقق صالح',
+        message: 'Verification code is valid',
     });
 });
 
@@ -204,7 +204,7 @@ const resetPassword = catchAsync(async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-        throw ApiError.notFound('المستخدم غير موجود');
+        throw ApiError.notFound('User not found');
     }
 
     // Update password
@@ -213,7 +213,7 @@ const resetPassword = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم إعادة تعيين كلمة المرور بنجاح',
+        message: 'Password reset successfully',
     });
 });
 
@@ -262,7 +262,7 @@ const updateProfile = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم تحديث الملف الشخصي بنجاح',
+        message: 'Profile updated successfully',
         data: {
             user,
         },
@@ -290,7 +290,7 @@ const changePassword = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم تغيير كلمة المرور بنجاح',
+        message: 'Password changed successfully',
     });
 });
 
@@ -298,7 +298,7 @@ const changePassword = catchAsync(async (req, res) => {
 const logout = catchAsync(async (req, res) => {
     res.status(200).json({
         success: true,
-        message: 'تم تسجيل الخروج بنجاح',
+        message: 'Logged out successfully',
     });
 });
 

@@ -34,13 +34,13 @@ function ResetPasswordContent() {
         const newErrors: typeof errors = {};
 
         if (!formData.password) {
-            newErrors.password = 'كلمة المرور الجديدة مطلوبة';
+            newErrors.password = 'New password is required';
         } else if (formData.password.length < 8) {
-            newErrors.password = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+            newErrors.password = 'Password must be at least 8 characters';
         }
 
         if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'كلمات المرور غير متطابقة';
+            newErrors.confirmPassword = 'Passwords do not match';
         }
 
         setErrors(newErrors);
@@ -74,7 +74,7 @@ function ResetPasswordContent() {
     };
 
     return (
-        <AuthLayout title="كلمة مرور جديدة">
+        <AuthLayout title="New Password">
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* General Error */}
                 {errors.general && (
@@ -86,8 +86,8 @@ function ResetPasswordContent() {
                 {/* New Password Field */}
                 <Input
                     type="password"
-                    label="كلمة مرور جديدة"
-                    placeholder="ضع كلمة المرور الجديدة"
+                    label="New Password"
+                    placeholder="Enter your new password"
                     icon="password"
                     showPasswordToggle
                     value={formData.password}
@@ -99,8 +99,8 @@ function ResetPasswordContent() {
                 {/* Confirm Password Field */}
                 <Input
                     type="password"
-                    label="تأكيد كلمة مرور جديدة"
-                    placeholder="تأكيد كلمة المرور"
+                    label="Confirm New Password"
+                    placeholder="Confirm Password"
                     icon="password"
                     showPasswordToggle
                     value={formData.confirmPassword}
@@ -117,7 +117,7 @@ function ResetPasswordContent() {
                     isLoading={isLoading}
                     leftIcon={!isLoading ? <KeyRound className="h-5 w-5" /> : undefined}
                 >
-                    إنهاء
+                    Reset Password
                 </Button>
             </form>
         </AuthLayout>
@@ -127,9 +127,9 @@ function ResetPasswordContent() {
 export default function ResetPasswordPage() {
     return (
         <Suspense fallback={
-            <AuthLayout title="جاري التحميل...">
+            <AuthLayout title="Loading...">
                 <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
                 </div>
             </AuthLayout>
         }>

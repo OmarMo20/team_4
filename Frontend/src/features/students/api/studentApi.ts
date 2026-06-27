@@ -88,7 +88,7 @@ export async function createStudentsBatch(students: CreateStudentData[]): Promis
             if (!data.fullName || !data.grade) {
                 failed.push({
                     student: data,
-                    error: 'اسم الطالب والصف الدراسي مطلوبان'
+                    error: 'Student name and grade are required'
                 });
                 continue;
             }
@@ -114,7 +114,7 @@ export async function createStudentsBatch(students: CreateStudentData[]): Promis
         
         return {
             success: true,
-            message: `تم إنشاء ${tempStudents.length} طالب في وضع الأوفلاين${failed.length > 0 ? `، فشل ${failed.length} طالب` : ''}`,
+            message: `Successfully created ${tempStudents.length} students offline${failed.length > 0 ? `, failed ${failed.length} students` : ''}`,
             data: {
                 success: tempStudents,
                 failed,

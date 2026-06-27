@@ -26,7 +26,7 @@ exports.getStudentReport = async (req, res, next) => {
         const { code } = req.params;
 
         if (!code) {
-            throw new ApiError('من فضلك أدخل كود الطالب', 400);
+            throw new ApiError('Please enter student code', 400);
         }
 
         // Multi-Tenant: Find student by code and teacherId (search from beginning)
@@ -37,7 +37,7 @@ exports.getStudentReport = async (req, res, next) => {
         );
 
         if (!student) {
-            throw new ApiError('لم يتم العثور على طالب بهذا الكود', 404);
+            throw new ApiError('No student found with this code', 404);
         }
 
         // Get attendance records
@@ -167,19 +167,19 @@ exports.getStudentReportById = async (req, res, next) => {
         const { id } = req.params;
 
         if (!id) {
-            throw new ApiError('من فضلك أدخل معرف الطالب', 400);
+            throw new ApiError('Please enter student ID', 400);
         }
 
         // Multi-Tenant: Find student by ID and teacherId
         const student = await Student.findById(id);
 
         if (!student) {
-            throw new ApiError('لم يتم العثور على الطالب', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         // Multi-Tenant: Ensure student belongs to authenticated teacher
         if (!belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بالوصول إلى هذا الطالب', 403);
+            throw new ApiError('You are not allowed to access this student', 403);
         }
 
         // Get attendance records

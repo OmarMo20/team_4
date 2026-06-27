@@ -10,7 +10,7 @@ const createAssistant = catchAsync(async (req, res) => {
     const existingUser = await User.findOne({ email: email.toLowerCase() });
 
     if (existingUser) {
-        throw ApiError.conflict('هذا البريد الإلكتروني مسجّل بالفعل');
+        throw ApiError.conflict('This email address is already registered');
     }
 
     // Create assistant account
@@ -27,7 +27,7 @@ const createAssistant = catchAsync(async (req, res) => {
 
     res.status(201).json({
         success: true,
-        message: 'تم إنشاء حساب المساعد بنجاح',
+        message: 'Assistant account created successfully',
         data: {
             assistant: {
                 id: assistant._id,
@@ -71,7 +71,7 @@ const updateAssistant = catchAsync(async (req, res) => {
     });
 
     if (!assistant) {
-        throw ApiError.notFound('المساعد غير موجود أو ليس لديك صلاحية لتعديله');
+        throw ApiError.notFound('Assistant not found or you do not have permission to edit it');
     }
 
     // Update allowed fields
@@ -88,7 +88,7 @@ const updateAssistant = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم تحديث بيانات المساعد بنجاح',
+        message: 'Assistant details updated successfully',
         data: {
             assistant: updatedAssistant,
         },
@@ -107,7 +107,7 @@ const deleteAssistant = catchAsync(async (req, res) => {
     });
 
     if (!assistant) {
-        throw ApiError.notFound('المساعد غير موجود أو ليس لديك صلاحية لحذفه');
+        throw ApiError.notFound('Assistant not found or you do not have permission to delete it');
     }
 
     // Soft delete by setting isActive to false
@@ -116,7 +116,7 @@ const deleteAssistant = catchAsync(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم حذف حساب المساعد بنجاح',
+        message: 'Assistant account deleted successfully',
     });
 });
 

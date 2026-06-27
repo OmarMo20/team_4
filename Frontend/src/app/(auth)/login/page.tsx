@@ -26,15 +26,15 @@ export default function LoginPage() {
         const newErrors: typeof errors = {};
 
         if (!formData.email) {
-            newErrors.email = 'البريد الإلكتروني مطلوب';
+            newErrors.email = 'Email is required';
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'البريد الإلكتروني غير صالح';
+            newErrors.email = 'Invalid email address';
         }
 
         if (!formData.password) {
-            newErrors.password = 'كلمة المرور مطلوبة';
+            newErrors.password = 'Password is required';
         } else if (formData.password.length < 6) {
-            newErrors.password = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+            newErrors.password = 'Password must be at least 6 characters long';
         }
 
         setErrors(newErrors);
@@ -68,7 +68,7 @@ export default function LoginPage() {
     };
 
     return (
-        <AuthLayout title="تسجيل دخول">
+        <AuthLayout title="Login">
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* General Error */}
                 {errors.general && (
@@ -80,8 +80,8 @@ export default function LoginPage() {
                 {/* Email Field */}
                 <Input
                     type="email"
-                    label="البريد الإلكتروني"
-                    placeholder="ضع البريد الإلكتروني"
+                    label="Email Address"
+                    placeholder="Enter your email"
                     icon="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 {/* Password Field */}
                 <Input
                     type="password"
-                    label="كلمة المرور"
+                    label="Password"
                     placeholder="xxxxxxxx"
                     icon="password"
                     showPasswordToggle
@@ -106,9 +106,9 @@ export default function LoginPage() {
                 <div className="text-right">
                     <Link
                         href={ROUTES.FORGOT_PASSWORD}
-                        className="text-sm text-purple-600 hover:text-purple-700 hover:underline"
+                        className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline"
                     >
-                        نسيت كلمة المرور
+                        Forgot Password
                     </Link>
                 </div>
 
@@ -120,7 +120,7 @@ export default function LoginPage() {
                     isLoading={isLoading}
                     leftIcon={!isLoading ? <LogIn className="h-5 w-5" /> : undefined}
                 >
-                    تسجيل دخول
+                    Login
                 </Button>
 
                 <div className="relative my-4">
@@ -128,7 +128,7 @@ export default function LoginPage() {
                         <div className="w-full border-t border-gray-200"></div>
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-2 text-gray-500">أو</span>
+                        <span className="bg-white px-2 text-gray-500">OR</span>
                     </div>
                 </div>
 
@@ -136,18 +136,18 @@ export default function LoginPage() {
                     <Button
                         type="button"
                         variant="outline"
-                        className="w-full border-2 hover:bg-gray-50"
+                        className="w-full border-2 hover:bg-[#FCFCFC]"
                         size="lg"
                     >
-                        تسجيل دخول كطالب
+                        Login as Student
                     </Button>
                 </Link>
 
                 {/* Register Link */}
-                <p className="text-center text-sm text-gray-600 mt-6">
-                    ليس لديك حساب؟{' '}
-                    <Link href={ROUTES.REGISTER} className="text-purple-600 hover:underline font-medium">
-                        إنشاء حساب
+                <p className="text-center text-sm text-gray-500 mt-6">
+                    Don't have an account?{' '}
+                    <Link href={ROUTES.REGISTER} className="text-indigo-600 hover:underline font-medium">
+                        Create Account
                     </Link>
                 </p>
             </form>

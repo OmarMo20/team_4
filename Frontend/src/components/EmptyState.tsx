@@ -17,7 +17,7 @@ export default function EmptyState({
 }: EmptyStateProps) {
     return (
         <div className="text-center flex flex-col items-center">
-            <div className="bg-gray-50 rounded-full p-8 mb-6">
+            <div className="bg-[#FCFCFC] rounded-full p-8 mb-6">
                 <Icon className="h-20 w-20 text-[#D1D1D1]" />
             </div>
             <h4 className="text-[#A1A1A1] text-xl font-bold font-cairo mb-2">{title}</h4>
@@ -25,7 +25,7 @@ export default function EmptyState({
             {actionLabel && onAction && (
                 <button
                     onClick={onAction}
-                    className="bg-[#5629A3] text-white px-8 py-3 rounded-[12px] font-bold font-cairo hover:bg-[#4a238b] transition-all flex items-center gap-2 shadow-lg active:scale-95"
+                    className="bg-white text-white px-8 py-3 rounded-[12px] font-bold font-cairo hover:bg-[#4a238b] transition-all flex items-center gap-2 shadow-lg active:scale-95"
                 >
                     <Plus className="h-5 w-5" />
                     <span>{actionLabel}</span>

@@ -23,18 +23,18 @@ const sessionSchema = new mongoose.Schema(
         },
         date: {
             type: Date,
-            required: [true, 'تاريخ الحصة مطلوب'],
+            required: [true, 'Session date is required'],
         },
         startTime: {
             type: String,
-            required: [true, 'وقت بداية الحصة مطلوب'],
+            required: [true, 'Session start time is required'],
         },
         endTime: {
             type: String,
         },
         grade: {
             type: String,
-            required: [true, 'الصف الدراسي مطلوب'],
+            required: [true, 'Grade is required'],
         },
         classroom: {
             type: String,

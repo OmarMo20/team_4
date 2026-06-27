@@ -25,7 +25,6 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
     const { showToast } = useToast();
     const [searchQuery, setSearchQuery] = useState('');
 
-    // During static generation, results might be undefined
     const safeResults = results || [];
     const filteredResults = safeResults.filter(result => 
         result.studentCode?.toString().includes(searchQuery) ||
@@ -34,23 +33,23 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
 
     const handleSearchCheck = () => {
         if (searchQuery && filteredResults.length === 0) {
-            showToast('لا يوجد طالب بهذا الكود او الاسم', 'error');
+            showToast('No student found with this code or name', 'error');
         }
     };
 
     if (loading) {
-        return <div className="animate-pulse h-64 bg-white rounded-3xl border border-gray-100" />;
+        return <div className="animate-pulse h-64 bg-white rounded-3xl border border-gray-200" />;
     }
 
     return (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden" dir="rtl">
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden text-left" dir="ltr">
             {/* Table Header with Search */}
             <div className="px-6 py-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="bg-purple-50 p-2.5 rounded-2xl">
-                        <Calendar className="h-6 w-6 text-purple-500" />
+                    <div className="bg-indigo-50 p-2.5 rounded-2xl">
+                        <Calendar className="h-6 w-6 text-indigo-500" />
                     </div>
-                    <h3 className="font-bold text-xl text-gray-800">سجل جميع الدرجات</h3>
+                    <h3 className="font-bold text-xl text-gray-900">All Grades Record</h3>
                 </div>
                 
                 <div className="relative group">
@@ -59,12 +58,12 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearchCheck()}
-                        placeholder="أدخل كود الطالب" 
-                        className="w-full md:w-80 pl-4 pr-11 py-3 rounded-2xl border border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-50/50 outline-none transition-all text-right font-medium"
+                        placeholder="Enter student code" 
+                        className="w-full md:w-80 pl-11 pr-4 py-3 rounded-2xl border border-gray-200 focus:border-indigo-400 focus:ring-4 focus:ring-purple-50/50 outline-none transition-all text-left font-medium"
                     />
                     <button 
                         onClick={handleSearchCheck}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-gray-400 hover:text-purple-600"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors text-[#80848E] hover:text-indigo-600"
                     >
                         <Search className="h-5 w-5" />
                     </button>
@@ -73,39 +72,39 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
 
             {/* Table */}
             <div className="overflow-x-auto custom-scrollbar">
-                <table className="w-full text-right border-collapse">
+                <table className="w-full text-left border-collapse">
                     <thead className="bg-[#f8f7ff]">
                         <tr>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 whitespace-nowrap">اسم الطالب</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 text-center whitespace-nowrap">كود الطالب</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 whitespace-nowrap min-w-[120px]">اسم الامتحان</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 text-center whitespace-nowrap">الدرجة</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 text-center whitespace-nowrap">النسبة</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 text-center whitespace-nowrap">التاريخ</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 text-right whitespace-nowrap min-w-[100px]">ملاحظات</th>
-                            <th className="px-3 py-3 text-xs font-bold text-purple-700 text-center whitespace-nowrap w-24">إجراءات</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 whitespace-nowrap text-left">Student Name</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 text-center whitespace-nowrap">Student Code</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 whitespace-nowrap min-w-[120px] text-left">Exam Name</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 text-center whitespace-nowrap">Score</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 text-center whitespace-nowrap">Percentage</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 text-center whitespace-nowrap">Date</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 whitespace-nowrap min-w-[100px] text-left">Notes</th>
+                            <th className="px-3 py-3 text-xs font-bold text-indigo-700 text-center whitespace-nowrap w-24">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                         {filteredResults.length === 0 ? (
                             <tr>
-                                <td colSpan={8} className="px-6 py-12 text-center text-gray-400 font-medium">
-                                    {searchQuery ? 'لا توجد نتائج مطابقة للبحث' : 'لا توجد درجات مسجلة حالياً'}
+                                <td colSpan={8} className="px-6 py-12 text-center text-[#80848E] font-medium">
+                                    {searchQuery ? 'No matching results found' : 'No grades recorded yet'}
                                 </td>
                             </tr>
                         ) : (
                             filteredResults.map((result) => (
-                                <tr key={result.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-3 py-3 text-sm font-bold text-gray-900 whitespace-nowrap">
+                                <tr key={result.id} className="hover:bg-[#FCFCFC]/50 transition-colors">
+                                    <td className="px-3 py-3 text-sm font-bold text-gray-900 whitespace-nowrap text-left">
                                         {result.studentName}
                                     </td>
-                                    <td className="px-3 py-3 text-center text-xs font-mono font-medium text-purple-600 bg-purple-50/30 rounded-lg whitespace-nowrap">
+                                    <td className="px-3 py-3 text-center text-xs font-mono font-medium text-indigo-600 bg-indigo-50/30 rounded-lg whitespace-nowrap">
                                         #{result.studentCode}
                                     </td>
-                                    <td className="px-3 py-3 text-sm font-medium text-gray-600 whitespace-nowrap">
+                                    <td className="px-3 py-3 text-sm font-medium text-gray-500 whitespace-nowrap text-left">
                                         {result.examName}
                                     </td>
-                                    <td className="px-3 py-3 text-center text-sm font-bold text-gray-700 whitespace-nowrap">
+                                    <td className="px-3 py-3 text-center text-sm font-bold text-[#DBDEE1] whitespace-nowrap">
                                         {result.score}/{result.fullMark}
                                     </td>
                                     <td className="px-3 py-3 text-center whitespace-nowrap">
@@ -118,9 +117,9 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                                         </span>
                                     </td>
                                     <td className="px-3 py-3 text-center text-xs font-medium text-gray-500 whitespace-nowrap">
-                                        {new Date(result.date).toLocaleDateString('ar-EG')}
+                                        {new Date(result.date).toLocaleDateString('en-US')}
                                     </td>
-                                    <td className="px-3 py-3 text-right text-xs font-medium text-gray-400 max-w-[150px] truncate" title={result.notes || ''}>
+                                    <td className="px-3 py-3 text-left text-xs font-medium text-[#80848E] max-w-[150px] truncate" title={result.notes || ''}>
                                         {result.notes || '-'}
                                     </td>
                                     <td className="px-3 py-3 text-center whitespace-nowrap">
@@ -129,7 +128,7 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                                                 <button
                                                     onClick={() => onEdit(result)}
                                                     className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                    title="تعديل"
+                                                    title="Edit"
                                                 >
                                                     <Edit2 className="h-4 w-4" />
                                                 </button>
@@ -137,12 +136,12 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                                             {onDelete && (
                                                 <button
                                                     onClick={() => {
-                                                        if (confirm('هل أنت متأكد من حذف هذه الدرجة؟')) {
+                                                        if (confirm('Are you sure you want to delete this grade?')) {
                                                             onDelete(result.id);
                                                         }
                                                     }}
                                                     className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                    title="حذف"
+                                                    title="Delete"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
@@ -158,22 +157,22 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (
-                <div className="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="text-sm text-gray-600 font-medium">
-                        عرض {((pagination.page - 1) * pagination.limit) + 1} - {Math.min(pagination.page * pagination.limit, pagination.total)} من {pagination.total}
+                <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+                    <div className="text-sm text-gray-500 font-medium">
+                        Showing {((pagination.page - 1) * pagination.limit) + 1} - {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
                     </div>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => onPageChange && onPageChange(pagination.page - 1)}
                             disabled={!pagination.hasPrevPage}
-                            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all flex items-center gap-1 ${
                                 pagination.hasPrevPage
-                                    ? 'bg-purple-50 text-purple-700 hover:bg-purple-100'
-                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                                    : 'bg-gray-100 text-[#80848E] cursor-not-allowed'
                             }`}
                         >
-                            <ChevronRight className="h-4 w-4 inline" />
-                            السابق
+                            <ChevronLeft className="h-4 w-4" />
+                            Previous
                         </button>
                         
                         <div className="flex items-center gap-1">
@@ -195,8 +194,8 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                                         onClick={() => onPageChange && onPageChange(pageNum)}
                                         className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${
                                             pagination.page === pageNum
-                                                ? 'bg-purple-600 text-white'
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                ? 'bg-indigo-600 text-white'
+                                                : 'bg-gray-100 text-[#DBDEE1] hover:bg-gray-200'
                                         }`}
                                     >
                                         {pageNum}
@@ -208,14 +207,14 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                         <button
                             onClick={() => onPageChange && onPageChange(pagination.page + 1)}
                             disabled={!pagination.hasNextPage}
-                            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all flex items-center gap-1 ${
                                 pagination.hasNextPage
-                                    ? 'bg-purple-50 text-purple-700 hover:bg-purple-100'
-                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                                    : 'bg-gray-100 text-[#80848E] cursor-not-allowed'
                             }`}
                         >
-                            التالي
-                            <ChevronLeft className="h-4 w-4 inline" />
+                            Next
+                            <ChevronRight className="h-4 w-4" />
                         </button>
                     </div>
                 </div>

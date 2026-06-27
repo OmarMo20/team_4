@@ -29,23 +29,23 @@ export default function RegisterPage() {
         const newErrors: typeof errors = {};
 
         if (!formData.name || formData.name.trim().length < 2) {
-            newErrors.name = 'الاسم مطلوب (حرفان على الأقل)';
+            newErrors.name = 'Name is required (at least 2 characters)';
         }
 
         if (!formData.email) {
-            newErrors.email = 'البريد الإلكتروني مطلوب';
+            newErrors.email = 'Email is required';
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'البريد الإلكتروني غير صالح';
+            newErrors.email = 'Invalid email address';
         }
 
         if (!formData.password) {
-            newErrors.password = 'كلمة المرور مطلوبة';
+            newErrors.password = 'Password is required';
         } else if (formData.password.length < 8) {
-            newErrors.password = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+            newErrors.password = 'Password must be at least 8 characters long';
         }
 
         if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'كلمات المرور غير متطابقة';
+            newErrors.confirmPassword = 'Passwords do not match';
         }
 
         setErrors(newErrors);
@@ -80,7 +80,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <AuthLayout title="إنشاء حساب جديد">
+        <AuthLayout title="Create a New Account">
             <form onSubmit={handleSubmit} className="space-y-4">
                 {/* General Error */}
                 {errors.general && (
@@ -92,8 +92,8 @@ export default function RegisterPage() {
                 {/* Name Field */}
                 <Input
                     type="text"
-                    label="الاسم الكامل"
-                    placeholder="ضع اسمك الكامل"
+                    label="Full Name"
+                    placeholder="Enter your full name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     error={errors.name}
@@ -103,8 +103,8 @@ export default function RegisterPage() {
                 {/* Email Field */}
                 <Input
                     type="email"
-                    label="البريد الإلكتروني"
-                    placeholder="ضع البريد الإلكتروني"
+                    label="Email Address"
+                    placeholder="Enter your email"
                     icon="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 {/* Phone Field */}
                 <Input
                     type="tel"
-                    label="رقم الهاتف (اختياري)"
+                    label="Phone Number (Optional)"
                     placeholder="01xxxxxxxxx"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -125,8 +125,8 @@ export default function RegisterPage() {
                 {/* Subject Field */}
                 <Input
                     type="text"
-                    label="المادة التي تدرسها (اختياري)"
-                    placeholder="مثال: الرياضيات، اللغة العربية، العلوم..."
+                    label="Subject You Teach (Optional)"
+                    placeholder="e.g. Mathematics, Arabic, Science..."
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     disabled={isLoading}
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                 {/* Password Field */}
                 <Input
                     type="password"
-                    label="كلمة المرور"
+                    label="Password"
                     placeholder="xxxxxxxx"
                     icon="password"
                     showPasswordToggle
@@ -148,8 +148,8 @@ export default function RegisterPage() {
                 {/* Confirm Password Field */}
                 <Input
                     type="password"
-                    label="تأكيد كلمة المرور"
-                    placeholder="تأكيد كلمة المرور"
+                    label="Confirm Password"
+                    placeholder="Confirm your password"
                     icon="password"
                     showPasswordToggle
                     value={formData.confirmPassword}
@@ -166,14 +166,14 @@ export default function RegisterPage() {
                     isLoading={isLoading}
                     leftIcon={!isLoading ? <UserPlus className="h-5 w-5" /> : undefined}
                 >
-                    إنشاء حساب
+                    Create Account
                 </Button>
 
                 {/* Login Link */}
-                <p className="text-center text-sm text-gray-600">
-                    لديك حساب بالفعل؟{' '}
-                    <Link href={ROUTES.LOGIN} className="text-purple-600 hover:underline font-medium">
-                        تسجيل دخول
+                <p className="text-center text-sm text-gray-500">
+                    Already have an account?{' '}
+                    <Link href={ROUTES.LOGIN} className="text-indigo-600 hover:underline font-medium">
+                        Login
                     </Link>
                 </p>
             </form>

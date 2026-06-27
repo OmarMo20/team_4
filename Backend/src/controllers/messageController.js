@@ -13,12 +13,12 @@ exports.sendMessage = async (req, res, next) => {
         const { studentId, content, recipientType } = req.body;
 
         if (!studentId || !content) {
-            throw new ApiError('من فضلك أدخل محتوى الرسالة والطالب', 400);
+            throw new ApiError('Please enter message content and student ID', 400);
         }
 
         const student = await Student.findById(studentId);
         if (!student || !belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('الطالب غير موجود أو غير تابع لك', 404);
+            throw new ApiError('Student not found or does not belong to you', 404);
         }
 
         // Create message record
@@ -31,7 +31,7 @@ exports.sendMessage = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'تم تسجيل الرسالة بنجاح',
+            message: 'Message recorded successfully',
             data: message
         });
     } catch (error) {

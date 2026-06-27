@@ -2,7 +2,7 @@
  * ===========================================
  * Attendance Controller (QR Scan)
  * ===========================================
- * Adds attendance by scanning a student's QR token while a session is in-progress.
+ * Adds attendance by scanning a student\'s QR token while a session is in-progress.
  *
  * Endpoint: POST /api/attendance/scan
  * Body: { sessionId, qrToken }
@@ -26,23 +26,23 @@ exports.scanAttendance = async (req, res, next) => {
     const token = typeof qrToken === 'string' ? qrToken.trim() : '';
 
     if (!sessionId || !token) {
-      throw ApiError.badRequest('من فضلك أدخل sessionId و QR token');
+      throw ApiError.badRequest('Please enter sessionId and QR token');
     }
 
     if (!req.teacherId) {
-      throw ApiError.forbidden('غير مسموح - يجب تسجيل الدخول كمعلم');
+      throw ApiError.forbidden('Unauthorized - must login as teacher');
     }
 
     // Ensure session exists and belongs to tenant and is in-progress
     const session = await Session.findById(sessionId);
     if (!session) {
-      throw ApiError.notFound('لم يتم العثور على الجلسة');
+      throw ApiError.notFound('Session not found');
     }
     if (!belongsToTenant(session, req.teacherId)) {
-      throw ApiError.forbidden('غير مسموح لك بتسجيل حضور لهذه الجلسة');
+      throw ApiError.forbidden('You are not allowed to register attendance for this session');
     }
     if (session.status !== 'in-progress') {
-      throw ApiError.badRequest('لا يمكن تسجيل الحضور إلا أثناء فتح الجلسة');
+      throw ApiError.badRequest('Attendance can only be registered while the session is open');
     }
 
     // Try to treat token as legacy JWT first; if fail, fallback to plain nationalId
@@ -66,7 +66,7 @@ exports.scanAttendance = async (req, res, next) => {
     } catch (err) {
       // If token looks like JWT but expired, treat as invalid
       if (err?.name === 'TokenExpiredError') {
-        throw ApiError.badRequest('انتهت صلاحية QR');
+        throw ApiError.badRequest('QR code has expired');
       }
       // Non-JWT → we'll try plain code below
     }
@@ -78,7 +78,7 @@ exports.scanAttendance = async (req, res, next) => {
 
     // Load student (tenant-scoped) to get display name
     if (!student) {
-      throw ApiError.notFound('لم يتم العثور على الطالب');
+      throw ApiError.notFound('Student not found');
     }
 
     // Create attendance (unique index prevents duplicates)

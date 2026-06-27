@@ -124,19 +124,19 @@ exports.getFinanceSummary = async (req, res, next) => {
                     .lean(),
             ])
             : await Promise.all([
-                // paidCount → عدد الحضور المسددين (status=present)
+                // paidCount -> Number of paid attendees (status=present)
                 Attendance.countDocuments({
                     teacherId: teacherObjectId,
                     status: 'present',
                     date: { $gte: monthStart, $lt: monthEnd },
                 }),
-                // pendingCount → عدد الطلاب غير المسددين (أي حالة غير present)
+                // pendingCount -> Number of unpaid students (any status other than present)
                 Attendance.countDocuments({
                     teacherId: teacherObjectId,
                     status: { $ne: 'present' },
                     date: { $gte: monthStart, $lt: monthEnd },
                 }),
-                // recentPaid → آخر مدفوعات من الحضور
+                // recentPaid -> Last payments from attendance
                 Attendance.find(
                     scopeQuery({ status: 'present' }, teacherId)
                 )
@@ -145,7 +145,7 @@ exports.getFinanceSummary = async (req, res, next) => {
                     .populate('student', 'fullName grade nationalId parentPhone')
                     .populate('session', 'title grade price')
                     .lean(),
-                // pendingStudents → عينة من الطلاب غير المسددين
+                // pendingStudents -> Sample of unpaid students
                 Attendance.find(
                     scopeQuery({ status: { $ne: 'present' } }, teacherId)
                 )
@@ -158,7 +158,7 @@ exports.getFinanceSummary = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم جلب ملخص المالية بنجاح',
+            message: 'Financial summary retrieved successfully',
             data: {
                 todayRevenue,
                 monthRevenue,
@@ -173,7 +173,7 @@ exports.getFinanceSummary = async (req, res, next) => {
                         status: 'paid',
                         type: 'tuition',
                         date: a.date,
-                        description: a.session?.title ? `حصة: ${a.session.title}` : 'حصة',
+                        description: a.session?.title ? `Session: ${a.session.title}` : 'Session',
                         student: a.student,
                     })),
                 pendingStudents: usePayments
@@ -185,7 +185,7 @@ exports.getFinanceSummary = async (req, res, next) => {
                         type: 'tuition',
                         date: a.date,
                         dueDate: null,
-                        description: a.session?.title ? `حصة: ${a.session.title}` : 'حصة',
+                        description: a.session?.title ? `Session: ${a.session.title}` : 'Session',
                         student: a.student
                             ? {
                                 id: a.student._id,
@@ -237,7 +237,7 @@ exports.getPayments = async (req, res, next) => {
             // Map finance filters to attendance status:
             // - 'paid'    → status: 'present'
             // - 'pending' → status != 'present'
-            // - undefined → نعرض المدفوع فقط افتراضياً
+            // - undefined -> Show paid only by default
             if (!status || status === 'paid') {
                 attendanceMatch.status = 'present';
             } else if (status === 'pending') {
@@ -307,7 +307,7 @@ exports.getPayments = async (req, res, next) => {
                 type: 'tuition',
                 date: item.date,
                 dueDate: null,
-                description: item.session?.title ? `حصة: ${item.session.title}` : 'حصة',
+                description: item.session?.title ? `Session: ${item.session.title}` : 'Session',
                 receiptNumber: null,
                 paymentMethod: 'cash',
                 student: item.student
@@ -323,7 +323,7 @@ exports.getPayments = async (req, res, next) => {
 
             return res.status(200).json({
                 success: true,
-                message: 'تم جلب سجل المدفوعات بنجاح',
+                message: 'Payment logs retrieved successfully',
                 data: {
                     payments,
                     total: totalCount,
@@ -417,7 +417,7 @@ exports.getPayments = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم جلب سجل المدفوعات بنجاح',
+            message: 'Payment logs retrieved successfully',
             data: {
                 payments,
                 total: totalCount,

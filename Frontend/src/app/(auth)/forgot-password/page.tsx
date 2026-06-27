@@ -18,11 +18,11 @@ export default function ForgotPasswordPage() {
 
     const validateEmail = () => {
         if (!email) {
-            setError('البريد الإلكتروني مطلوب');
+            setError('Email is required');
             return false;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            setError('البريد الإلكتروني غير صالح');
+            setError('Invalid email address');
             return false;
         }
         return true;
@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <AuthLayout title="نسيت كلمة المرور" subtitle="أدخل بريدك الإلكتروني لإرسال رمز التحقق">
+        <AuthLayout title="Forgot Password" subtitle="Enter your email to send the verification code">
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Error */}
                 {error && (
@@ -61,8 +61,8 @@ export default function ForgotPasswordPage() {
                 {/* Email Field */}
                 <Input
                     type="email"
-                    label="البريد الإلكتروني"
-                    placeholder="ضع البريد الإلكتروني"
+                    label="Email Address"
+                    placeholder="Enter your email"
                     icon="email"
                     value={email}
                     onChange={(e) => {
@@ -81,14 +81,14 @@ export default function ForgotPasswordPage() {
                     isLoading={isLoading}
                     leftIcon={!isLoading ? <Mail className="h-5 w-5" /> : undefined}
                 >
-                    إرسال رمز التحقق
+                    Send Verification Code
                 </Button>
 
                 {/* Back to Login */}
-                <p className="text-center text-sm text-gray-600">
-                    تذكرت كلمة المرور؟{' '}
-                    <Link href={ROUTES.LOGIN} className="text-purple-600 hover:underline font-medium">
-                        تسجيل دخول
+                <p className="text-center text-sm text-gray-500">
+                    Remembered your password?{' '}
+                    <Link href={ROUTES.LOGIN} className="text-indigo-600 hover:underline font-medium">
+                        Login
                     </Link>
                 </p>
             </form>

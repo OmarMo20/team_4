@@ -21,10 +21,10 @@ const studentSchema = new mongoose.Schema(
         },
         fullName: {
             type: String,
-            required: [true, 'الاسم الكامل مطلوب'],
+            required: [true, 'Full name is required'],
             trim: true,
-            minlength: [2, 'يجب أن يكون الاسم على الأقل حرفين'],
-            maxlength: [100, 'يجب ألا يزيد الاسم عن 100 حرف'],
+            minlength: [2, 'Name must be at least 2 characters'],
+            maxlength: [100, 'Name cannot exceed 100 characters'],
         },
         /**
          * Student Code (UNIQUE per teacher/tenant)
@@ -32,7 +32,7 @@ const studentSchema = new mongoose.Schema(
          */
         nationalId: {
             type: String,
-            required: [true, 'كود الطالب مطلوب'],
+            required: [true, 'Student code is required'],
             trim: true,
             unique: false, // Index handles uniqueness scoped by teacherId
         },
@@ -41,7 +41,7 @@ const studentSchema = new mongoose.Schema(
         },
         grade: {
             type: String,
-            required: [true, 'الصف الدراسي مطلوب'],
+            required: [true, 'Grade / Year is required'],
             trim: true,
         },
         classroom: {

@@ -1,4 +1,3 @@
-
 const { body, validationResult } = require('express-validator');
 const ApiError = require('../utils/ApiError');
 
@@ -13,13 +12,13 @@ const validate = (req, res, next) => {
         }));
 
         // Create error response
-        const error = ApiError.badRequest('فشل التحقق من البيانات');
+        const error = ApiError.badRequest('Validation failed');
         error.errors = errorMessages;
 
         return res.status(400).json({
             success: false,
             status: 'fail',
-            message: 'فشل التحقق من البيانات',
+            message: 'Validation failed',
             errors: errorMessages,
         });
     }
@@ -32,37 +31,37 @@ const registerValidation = [
     body('name')
         .trim()
         .notEmpty()
-        .withMessage('الاسم مطلوب')
+        .withMessage('Name is required')
         .isLength({ min: 2, max: 50 })
-        .withMessage('يجب أن يكون الاسم بين 2 و 50 حرفاً')
+        .withMessage('Name must be between 2 and 50 characters')
         // Allow any language letters (including Arabic) + spaces only
         .matches(/^[\p{L}\s]+$/u)
-        .withMessage('يمكن أن يحتوي الاسم على الحروف والمسافات فقط'),
+        .withMessage('Name can only contain letters and spaces'),
 
     body('email')
         .trim()
         .notEmpty()
-        .withMessage('البريد الإلكتروني مطلوب')
+        .withMessage('Email is required')
         .isEmail()
-        .withMessage('من فضلك أدخل بريدًا إلكترونيًا صالحًا')
+        .withMessage('Please enter a valid email address')
         .normalizeEmail(),
 
     body('password')
         .trim()
         .notEmpty()
-        .withMessage('كلمة المرور مطلوبة')
+        .withMessage('Password is required')
         .isLength({ min: 8 })
-        .withMessage('يجب أن تكون كلمة المرور 8 أحرف على الأقل')
+        .withMessage('Password must be at least 8 characters')
         .matches(/\d/)
-        .withMessage('يجب أن تحتوي كلمة المرور على رقم واحد على الأقل')
+        .withMessage('Password must contain at least one number')
         .matches(/[a-zA-Z]/)
-        .withMessage('يجب أن تحتوي كلمة المرور على حرف واحد على الأقل'),
+        .withMessage('Password must contain at least one letter'),
 
     body('confirmPassword')
         .optional()
         .custom((value, { req }) => {
             if (value !== req.body.password) {
-                throw new Error('كلمتا المرور غير متطابقتين');
+                throw new Error('Passwords do not match');
             }
             return true;
         }),
@@ -75,15 +74,15 @@ const loginValidation = [
     body('email')
         .trim()
         .notEmpty()
-        .withMessage('البريد الإلكتروني مطلوب')
+        .withMessage('Email is required')
         .isEmail()
-        .withMessage('من فضلك أدخل بريدًا إلكترونيًا صالحًا')
+        .withMessage('Please enter a valid email address')
         .normalizeEmail(),
 
     body('password')
         .trim()
         .notEmpty()
-        .withMessage('كلمة المرور مطلوبة'),
+        .withMessage('Password is required'),
 
     validate,
 ];
@@ -94,10 +93,10 @@ const updateProfileValidation = [
         .optional()
         .trim()
         .isLength({ min: 2, max: 50 })
-        .withMessage('يجب أن يكون الاسم بين 2 و 50 حرفاً')
+        .withMessage('Name must be between 2 and 50 characters')
         // Allow any language letters (including Arabic) + spaces only
         .matches(/^[\p{L}\s]+$/u)
-        .withMessage('يمكن أن يحتوي الاسم على الحروف والمسافات فقط'),
+        .withMessage('Name can only contain letters and spaces'),
 
     validate,
 ];
@@ -107,21 +106,21 @@ const changePasswordValidation = [
     body('currentPassword')
         .trim()
         .notEmpty()
-        .withMessage('كلمة المرور الحالية مطلوبة'),
+        .withMessage('Current password is required'),
 
     body('newPassword')
         .trim()
         .notEmpty()
-        .withMessage('كلمة المرور الجديدة مطلوبة')
+        .withMessage('New password is required')
         .isLength({ min: 8 })
-        .withMessage('يجب أن تكون كلمة المرور الجديدة 8 أحرف على الأقل')
+        .withMessage('New password must be at least 8 characters')
         .matches(/\d/)
-        .withMessage('يجب أن تحتوي كلمة المرور الجديدة على رقم واحد على الأقل')
+        .withMessage('New password must contain at least one number')
         .matches(/[a-zA-Z]/)
-        .withMessage('يجب أن تحتوي كلمة المرور الجديدة على حرف واحد على الأقل')
+        .withMessage('New password must contain at least one letter')
         .custom((value, { req }) => {
             if (value === req.body.currentPassword) {
-                throw new Error('يجب أن تختلف كلمة المرور الجديدة عن الحالية');
+                throw new Error('New password must be different from current password');
             }
             return true;
         }),
@@ -130,7 +129,7 @@ const changePasswordValidation = [
         .optional()
         .custom((value, { req }) => {
             if (value !== req.body.newPassword) {
-                throw new Error('كلمتا المرور غير متطابقتين');
+                throw new Error('Passwords do not match');
             }
             return true;
         }),

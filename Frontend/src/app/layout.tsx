@@ -6,8 +6,8 @@ import "@/lib/offline-handler";
 import PWARegister from "@/components/PWARegister";
 
 export const metadata: Metadata = {
-  title: "ClassTrack - إدارة الفصول الدراسية",
-  description: "نظام إدارة الفصول الدراسية والحضور",
+  title: "ClassTrack - Classroom Management",
+  description: "Classroom and Attendance Management System",
   icons: {
     icon: "/icon-logo-app.png",
     shortcut: "/icon-logo-app.png",
@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="en" dir="ltr">
       <body className="antialiased font-sans">
         <PWARegister />
         <ToastProvider>

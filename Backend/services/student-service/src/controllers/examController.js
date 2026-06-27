@@ -223,7 +223,7 @@ exports.addSingleResult = catchAsync(async (req, res, next) => {
     }
 
     if (!student) {
-        return next(new ApiError(`الطالب غير موجود. (كود: ${studentCode || 'غير متوفر'}, اسم: ${studentName || 'غير متوفر'}). يرجى التأكد من البيانات أو إضافة الطالب أولاً.`, 404));
+        return next(new ApiError(`Student not found. (Code: ${studentCode || "N/A"}, Name: ${studentName || "N/A"}). Please check the data or add the student first.`, 404));
     }
 
     // 2. Find or Create Exam
@@ -250,7 +250,7 @@ exports.addSingleResult = catchAsync(async (req, res, next) => {
     }
 
     if (!exam) {
-        return next(new ApiError('يجب إدخال معرف الامتحان أو عنوان الامتحان', 400));
+        return next(new ApiError('Exam ID or Exam Title must be provided', 400));
     }
 
     // 3. Create or Update Result
@@ -273,7 +273,7 @@ exports.addSingleResult = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم حفظ الدرجة بنجاح',
+        message: 'Grade saved successfully',
         data: result
     });
 });
@@ -362,12 +362,12 @@ exports.updateResult = catchAsync(async (req, res, next) => {
     }).populate('examId', 'fullMark');
 
     if (!result) {
-        return next(new ApiError('النتيجة غير موجودة', 404));
+        return next(new ApiError('Result not found', 404));
     }
 
     // Validate score doesn't exceed fullMark
     if (score !== undefined && result.examId && score > result.examId.fullMark) {
-        return next(new ApiError(`الدرجة لا يمكن أن تكون أكبر من ${result.examId.fullMark}`, 400));
+        return next(new ApiError(`Grade cannot be greater than ${result.examId.fullMark}`, 400));
     }
 
     // Update result
@@ -379,7 +379,7 @@ exports.updateResult = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'تم تحديث الدرجة بنجاح',
+        message: 'Grade updated successfully',
         data: result
     });
 });
@@ -397,11 +397,11 @@ exports.deleteResult = catchAsync(async (req, res, next) => {
     });
 
     if (!result) {
-        return next(new ApiError('النتيجة غير موجودة', 404));
+        return next(new ApiError('Result not found', 404));
     }
 
     res.status(200).json({
         success: true,
-        message: 'تم حذف الدرجة بنجاح'
+        message: 'Grade deleted successfully'
     });
 });

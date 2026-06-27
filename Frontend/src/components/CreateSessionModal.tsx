@@ -36,42 +36,42 @@ export default function CreateSessionModal({
             onClick={onClose}
         >
             <div
-                className="bg-white w-full sm:max-w-lg shadow-2xl relative rounded-t-[28px] sm:rounded-[30px] max-h-[92vh] sm:max-h-[85vh] overflow-hidden animate-in duration-300 fade-in slide-in-from-bottom-8 sm:zoom-in-95 sm:slide-in-from-bottom-0"
+                className="bg-white w-full sm:max-w-lg shadow-2xl relative rounded-t-[28px] sm:rounded-[30px] max-h-[92vh] sm:max-h-[85vh] overflow-hidden animate-in duration-300 fade-in slide-in-from-bottom-8 sm:zoom-in-95 sm:slide-in-from-bottom-0 text-left"
                 onClick={(e) => e.stopPropagation()}
-                dir="rtl"
+                dir="ltr"
             >
                 <button
                     onClick={onClose}
-                    className="absolute top-4 left-4 sm:top-6 sm:left-6 text-[#A1A1A1] hover:text-[#414141] transition-colors z-20"
+                    className="absolute top-4 right-4 sm:top-6 sm:right-6 text-[#A1A1A1] hover:text-[#414141] transition-colors z-20"
                 >
                     <X className="w-6 h-6" />
                 </button>
 
-                <div className="p-5 sm:p-8 pb-0">
+                <div className="p-5 sm:p-8 pb-0 text-left">
                     <div className="sm:hidden w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#414141] mb-4 sm:mb-8 font-cairo text-right">
-                        إضافة جلسة جديدة
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#414141] mb-4 sm:mb-8 text-left">
+                        Create New Session
                     </h2>
                 </div>
 
                 <form onSubmit={onSubmit} className="flex flex-col max-h-[92vh] sm:max-h-[85vh]">
-                    <div className="px-5 sm:px-8 space-y-5 sm:space-y-6 overflow-y-auto pb-28 scroll-pb-32">
+                    <div className="px-5 sm:px-8 space-y-5 sm:space-y-6 overflow-y-auto pb-28 scroll-pb-32 text-left">
                         <div>
-                            <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">
-                                العنوان (اختياري)
+                            <label className="block text-sm font-bold text-[#414141] mb-2 text-left">
+                                Title (Optional)
                             </label>
                             <input
                                 type="text"
                                 name="title"
-                                className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right"
-                                placeholder="مثال: جلسة المراجعة النهائية"
+                                className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left"
+                                placeholder="e.g., Final Revision Session"
                             />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">
-                                    التاريخ *
+                                <label className="block text-sm font-bold text-[#414141] mb-2 text-left">
+                                    Date *
                                 </label>
                                 <input
                                     type="date"
@@ -79,92 +79,92 @@ export default function CreateSessionModal({
                                     value={todayDate}
                                     onChange={(e) => setTodayDate(e.target.value)}
                                     required
-                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right"
+                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">
-                                    الصف *
+                                <label className="block text-sm font-bold text-[#414141] mb-2 text-left">
+                                    Grade *
                                 </label>
                                 <select
                                     name="grade"
                                     required
                                     defaultValue=""
-                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right"
+                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left"
                                 >
-                                    <option value="" disabled>اختر الصف</option>
-                                    <option value="الصف الأول الإعدادي">الصف الأول الإعدادي</option>
-                                    <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
-                                    <option value="الصف الثالث الإعدادي">الصف الثالث الإعدادي</option>
-                                    <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
-                                    <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
-                                    <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                                    <option value="" disabled>Select Grade</option>
+                                    <option value="1st Preparatory">1st Preparatory</option>
+                                    <option value="2nd Preparatory">2nd Preparatory</option>
+                                    <option value="3rd Preparatory">3rd Preparatory</option>
+                                    <option value="1st Secondary">1st Secondary</option>
+                                    <option value="2nd Secondary">2nd Secondary</option>
+                                    <option value="3rd Secondary">3rd Secondary</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">
-                                    وقت البدء *
+                                <label className="block text-sm font-bold text-[#414141] mb-2 text-left">
+                                    Start Time *
                                 </label>
                                 <input
                                     type="time"
                                     name="startTime"
                                     required
-                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right"
+                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">
-                                    وقت الانتهاء
+                                <label className="block text-sm font-bold text-[#414141] mb-2 text-left">
+                                    End Time
                                 </label>
                                 <input
                                     type="time"
                                     name="endTime"
-                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right"
+                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">
-                                    سعر الحصة
+                                <label className="block text-sm font-bold text-[#414141] mb-2 text-left">
+                                    Session Price
                                 </label>
                                 <input
                                     type="number"
                                     name="price"
                                     min="0"
                                     placeholder="0.00"
-                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right"
+                                    className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-[#414141] mb-2 font-cairo text-right">ملاحظات</label>
+                            <label className="block text-sm font-bold text-[#414141] mb-2 text-left">Notes</label>
                             <textarea
                                 name="notes"
                                 rows={3}
-                                className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#5629A3] focus:border-transparent outline-none transition-all font-cairo text-right resize-none"
-                                placeholder="أي ملاحظات إضافية للجلسة..."
+                                className="w-full px-5 py-3 bg-[#FCFCFC] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1E1F22] focus:border-transparent outline-none transition-all text-left resize-none"
+                                placeholder="Any additional notes for the session..."
                             />
                         </div>
                     </div>
 
-                    <div className="px-5 sm:px-8 py-4 bg-white border-t border-gray-100 sticky bottom-0">
+                    <div className="px-5 sm:px-8 py-4 bg-white border-t border-gray-200 sticky bottom-0 text-left">
                         <div className="flex gap-3 sm:gap-4">
                             <button
                                 type="submit"
                                 disabled={isCreating}
-                                className="flex-1 bg-[#5629A3] text-white px-6 py-4 rounded-xl font-bold font-cairo hover:bg-[#4a238b] transition-all disabled:opacity-50 shadow-lg shadow-purple-200 active:scale-[0.98]"
+                                className="flex-1 bg-white text-white px-6 py-4 rounded-xl font-bold hover:bg-[#4a238b] transition-all disabled:opacity-50 shadow-lg shadow-purple-200 active:scale-[0.98]"
                             >
-                                {isCreating ? 'جاري الإنشاء...' : 'إنشاء جلسة جديدة'}
+                                {isCreating ? 'Creating...' : 'Create Session'}
                             </button>
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-6 py-4 border border-gray-100 text-[#A1A1A1] rounded-xl font-bold font-cairo hover:bg-gray-50 transition-all active:scale-[0.98]"
+                                className="px-6 py-4 border border-gray-200 text-[#A1A1A1] rounded-xl font-bold hover:bg-[#FCFCFC] transition-all active:scale-[0.98]"
                             >
-                                إلغاء
+                                Cancel
                             </button>
                         </div>
                     </div>

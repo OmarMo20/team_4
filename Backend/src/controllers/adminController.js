@@ -71,16 +71,16 @@ exports.activateTeacher = async (req, res, next) => {
         ).select('name email phone subject isActive isVerified');
 
         if (!teacher) {
-            throw new ApiError('المعلم غير موجود', 404);
+            throw new ApiError('Teacher not found', 404);
         }
 
         if (teacher.role !== 'teacher') {
-            throw new ApiError('المستخدم ليس معلماً', 400);
+            throw new ApiError('User is not a teacher', 400);
         }
 
         res.status(200).json({
             success: true,
-            message: 'تم تفعيل حساب المعلم بنجاح',
+            message: 'Teacher account activated successfully',
             data: teacher,
         });
     } catch (error) {
@@ -102,16 +102,16 @@ exports.deactivateTeacher = async (req, res, next) => {
         ).select('name email phone subject isActive isVerified');
 
         if (!teacher) {
-            throw new ApiError('المعلم غير موجود', 404);
+            throw new ApiError('Teacher not found', 404);
         }
 
         if (teacher.role !== 'teacher') {
-            throw new ApiError('المستخدم ليس معلماً', 400);
+            throw new ApiError('User is not a teacher', 400);
         }
 
         res.status(200).json({
             success: true,
-            message: 'تم تعطيل حساب المعلم بنجاح',
+            message: 'Teacher account deactivated successfully',
             data: teacher,
         });
     } catch (error) {
@@ -131,11 +131,11 @@ exports.getTeacherDetails = async (req, res, next) => {
             .lean();
 
         if (!teacher) {
-            throw new ApiError('المعلم غير موجود', 404);
+            throw new ApiError('Teacher not found', 404);
         }
 
         if (teacher.role !== 'teacher') {
-            throw new ApiError('المستخدم ليس معلماً', 400);
+            throw new ApiError('User is not a teacher', 400);
         }
 
         const teacherId = teacher._id || teacher.id;
@@ -180,18 +180,18 @@ exports.deleteTeacher = async (req, res, next) => {
         const teacher = await User.findById(req.params.id);
 
         if (!teacher) {
-            throw new ApiError('المعلم غير موجود', 404);
+            throw new ApiError('Teacher not found', 404);
         }
 
         if (teacher.role !== 'teacher') {
-            throw new ApiError('المستخدم ليس معلماً', 400);
+            throw new ApiError('User is not a teacher', 400);
         }
 
         await User.findByIdAndDelete(req.params.id);
 
         res.status(200).json({
             success: true,
-            message: 'تم حذف المعلم بنجاح',
+            message: 'Teacher deleted successfully',
         });
     } catch (error) {
         next(error);

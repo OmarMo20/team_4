@@ -17,21 +17,21 @@ const examSchema = new mongoose.Schema(
         },
         title: {
             type: String,
-            required: [true, 'عنوان الامتحان مطلوب'],
+            required: [true, 'Exam title is required'],
             trim: true,
         },
         date: {
             type: Date,
-            required: [true, 'تاريخ الامتحان مطلوب'],
+            required: [true, 'Exam date is required'],
         },
         fullMark: {
             type: Number,
-            required: [true, 'الدرجة النهائية مطلوبة'],
+            required: [true, 'Full mark is required'],
             min: 0,
         },
         passingMark: {
             type: Number,
-            required: [true, 'درجة النجاح مطلوبة'],
+            required: [true, 'Passing mark is required'],
             min: 0,
         },
         subject: {

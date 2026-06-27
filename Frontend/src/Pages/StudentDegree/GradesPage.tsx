@@ -75,7 +75,6 @@ export default function GradesPage() {
     const handleSearch = async (code: string, page: number = 1) => {
         setSearchCode(code);
 
-        // If empty search, reset to overview and fetch all
         if (!code.trim()) {
             setViewMode('overview');
             fetchData(1);
@@ -102,7 +101,6 @@ export default function GradesPage() {
                         hasPrevPage: res.hasPrevPage || false
                     });
                 }
-                // Switch to table view to show results
                 setViewMode('table');
             }
         } catch (error) {
@@ -148,23 +146,23 @@ export default function GradesPage() {
         try {
             const res = await examService.deleteResult(id);
             if (res.success) {
-                showToast('تم حذف الدرجة بنجاح', 'success');
+                showToast('Grade deleted successfully', 'success');
                 fetchData(pagination.page);
             }
         } catch (error: any) {
             console.error('Error deleting grade:', error);
-            const message = error.response?.data?.message || 'حدث خطأ أثناء حذف الدرجة';
+            const message = error.response?.data?.message || 'An error occurred while deleting the grade';
             showToast(message, 'error');
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#fcfcfc] p-4 md:p-4 lg:p-6 space-y-4 md:space-y-6" dir="rtl">
+        <div className="min-h-screen bg-[#fcfcfc] p-4 md:p-4 lg:p-6 space-y-4 md:space-y-6 text-left" dir="ltr">
             {/* Title & Subtitle */}
-            <div className="text-right space-y-2 md:space-y-3">
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-black text-gray-900 leading-tight">التقارير الشاملة</h1>
+            <div className="text-left space-y-2 md:space-y-3">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">Comprehensive Reports</h1>
                 <p className="text-gray-500 text-sm md:text-base font-medium">
-                    استعراض تقارير الطلاب الشاملة - الحضور والمدفوعات والدرجات
+                    Review comprehensive student reports - attendance, payments, and grades
                 </p>
             </div>
 
@@ -178,47 +176,47 @@ export default function GradesPage() {
                 <div className="bg-gray-100 p-1.5 rounded-2xl flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="bg-white text-gray-800 px-6 md:px-8 py-3 md:py-3.5 rounded-2xl font-bold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 text-base md:text-lg flex-1 sm:flex-none"
+                        className="bg-white text-gray-900 px-6 md:px-8 py-3 md:py-3.5 rounded-2xl font-bold shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-2 text-base md:text-lg flex-1 sm:flex-none"
                     >
-                        <Plus className="h-5 w-5 text-purple-600" />
-                        <span>إضافة درجة</span>
+                        <Plus className="h-5 w-5 text-indigo-600" />
+                        <span>Add Grade</span>
                     </button>
                     <button
                         onClick={() => setViewMode(viewMode === 'overview' ? 'table' : 'overview')}
-                        className={`px-6 md:px-8 py-3 md:py-3.5 rounded-[1.8rem] font-bold transition-all flex items-center justify-center gap-2 text-base md:text-lg flex-1 sm:flex-none ${viewMode === 'table' ? 'bg-white shadow-sm text-gray-800' : 'text-gray-500 hover:text-gray-700'
+                        className={`px-6 md:px-8 py-3 md:py-3.5 rounded-[1.8rem] font-bold transition-all flex items-center justify-center gap-2 text-base md:text-lg flex-1 sm:flex-none ${viewMode === 'table' ? 'bg-white shadow-xl text-gray-900' : 'text-gray-500 hover:text-[#DBDEE1]'
                             }`}
                     >
                         <BookOpen className="h-5 w-5" />
-                        <span>{viewMode === 'overview' ? 'عرض الجداول' : 'عرض الاحصائيات'}</span>
+                        <span>{viewMode === 'overview' ? 'Show Tables' : 'Show Statistics'}</span>
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
                 {/* Main Content Area */}
-                <div className="lg:col-span-12 order-2 lg:order-1">
+                <div className="lg:col-span-12 order-2 lg:order-1 text-left">
                     {viewMode === 'overview' ? (
-                        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] border border-gray-100 p-6 md:p-10 shadow-sm space-y-6">
-                            <div className="flex items-center justify-end gap-2 mb-2">
-                                <h2 className="text-xl md:text-2xl font-bold text-gray-900">بحث عن طالب</h2>
-                                <Search className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
+                        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] border border-gray-200 p-6 md:p-10 shadow-xl space-y-6 text-left">
+                            <div className="flex items-center justify-start gap-2 mb-2">
+                                <Search className="h-5 w-5 md:h-6 md:w-6 text-indigo-600" />
+                                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Search for Student</h2>
                             </div>
 
                             <div className="relative w-full border border-gray-200 rounded-[1.5rem] md:rounded-[2rem] p-2 md:p-3 flex flex-col md:flex-row items-stretch md:items-center gap-2">
-                                <button
-                                    onClick={() => handleSearch(searchCode)}
-                                    className="bg-[#6339AC] hover:bg-purple-700 text-white font-bold px-8 md:px-10 py-3.5 md:py-4 rounded-xl md:rounded-[1.5rem] transition-all text-lg md:text-xl order-2 md:order-1"
-                                >
-                                    بحث
-                                </button>
                                 <input
                                     type="text"
                                     value={searchCode}
                                     onChange={(e) => setSearchCode(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchCode)}
-                                    placeholder="أدخل كود الطالب"
-                                    className="flex-1 bg-transparent px-4 md:px-6 py-3 md:py-4 text-right text-lg md:text-xl font-medium outline-none placeholder:text-gray-300 order-1 md:order-2"
+                                    placeholder="Enter student code"
+                                    className="flex-1 bg-transparent px-4 md:px-6 py-3 md:py-4 text-left text-lg md:text-xl font-medium outline-none placeholder:text-gray-300 order-1 md:order-1"
                                 />
+                                <button
+                                    onClick={() => handleSearch(searchCode)}
+                                    className="bg-[#4F46E5] hover:bg-indigo-700 text-white font-bold px-8 md:px-10 py-3.5 md:py-4 rounded-xl md:rounded-[1.5rem] transition-all text-lg md:text-xl order-2 md:order-2"
+                                >
+                                    Search
+                                </button>
                             </div>
                         </div>
                     ) : (
@@ -233,11 +231,6 @@ export default function GradesPage() {
                         />
                     )}
                 </div>
-
-                {/* Sidebar area */}
-                {/* <div className="lg:col-span-4 order-1 lg:order-2">
-                    <RecentGradesList grades={recentGrades} loading={loading} />
-                </div> */}
             </div>
 
             {/* Modals */}

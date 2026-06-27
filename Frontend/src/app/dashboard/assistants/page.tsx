@@ -30,7 +30,7 @@ export default function AssistantsPage() {
     useEffect(() => {
         // Check if user has permission
         if (user && user.role !== 'teacher' && user.role !== 'admin') {
-            const errorMsg = 'لا تملك صلاحية للوصول إلى هذه الصفحة. دورك الحالي: ' + (user.role || 'غير محدد') + '. يرجى تسجيل الخروج والدخول مرة أخرى لتحديث الدور.';
+            const errorMsg = 'You do not have permission to access this page. Your current role: ' + (user.role || 'not specified') + '. Please logout and log back in to refresh your role.';
             showToast(errorMsg, 'error');
             setTimeout(() => {
                 router.push(ROUTES.DASHBOARD);
@@ -58,7 +58,7 @@ export default function AssistantsPage() {
             });
             
             // Handle different error scenarios
-            let errorMessage = 'فشل في جلب قائمة المساعدين';
+            let errorMessage = 'Failed to fetch assistants list';
             
             if (error.response) {
                 // Server responded with error
@@ -66,13 +66,13 @@ export default function AssistantsPage() {
                 const data = error.response.data;
                 
                 if (status === 403) {
-                    errorMessage = 'لا تملك صلاحية للوصول إلى هذه الصفحة. ';
+                    errorMessage = 'You do not have permission to access this page. ';
                     if (user?.role) {
-                        errorMessage += `دورك الحالي: ${user.role}. `;
+                        errorMessage += `Your current role: ${user.role}. `;
                     }
-                    errorMessage += 'يرجى التأكد من أن دورك في قاعدة البيانات هو "teacher" أو "admin"، ثم سجّل خروج ودخول مرة أخرى.';
+                    errorMessage += 'Please make sure your database role is "teacher" or "admin", then logout and login again.';
                 } else if (status === 401) {
-                    errorMessage = 'يجب تسجيل الدخول للوصول إلى هذه الصفحة';
+                    errorMessage = 'You must be logged in to access this page';
                 } else if (data?.message) {
                     errorMessage = data.message;
                 } else if (typeof data === 'string') {
@@ -103,7 +103,7 @@ export default function AssistantsPage() {
             };
 
             await createAssistant(assistantData);
-            showToast('تم إنشاء حساب المساعد بنجاح', 'success');
+            showToast('Assistant account created successfully', 'success');
             
             // Reset form
             setFormData({
@@ -119,7 +119,7 @@ export default function AssistantsPage() {
             console.error('Failed to create assistant:', error);
             
             // Handle validation errors
-            let errorMessage = 'فشل في إنشاء حساب المساعد';
+            let errorMessage = 'Failed to create assistant account';
             
             if (error.response?.data) {
                 const data = error.response.data;
@@ -157,27 +157,27 @@ export default function AssistantsPage() {
     const handleUpdate = async (id: string) => {
         try {
             await updateAssistant(id, editData);
-            showToast('تم تحديث بيانات المساعد بنجاح', 'success');
+            showToast('Assistant updated successfully', 'success');
             setEditingId(null);
             await fetchAssistants();
         } catch (error: any) {
             console.error('Failed to update assistant:', error);
-            showToast(error.response?.data?.message || 'فشل في تحديث بيانات المساعد', 'error');
+            showToast(error.response?.data?.message || 'Failed to update assistant', 'error');
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('هل أنت متأكد من حذف هذا المساعد؟')) {
+        if (!confirm('Are you sure you want to delete this assistant?')) {
             return;
         }
 
         try {
             await deleteAssistant(id);
-            showToast('تم حذف حساب المساعد بنجاح', 'success');
+            showToast('Assistant deleted successfully', 'success');
             await fetchAssistants();
         } catch (error: any) {
             console.error('Failed to delete assistant:', error);
-            showToast(error.response?.data?.message || 'فشل في حذف حساب المساعد', 'error');
+            showToast(error.response?.data?.message || 'Failed to delete assistant', 'error');
         }
     };
 
@@ -198,45 +198,45 @@ export default function AssistantsPage() {
     };
 
     return (
-        <div className="space-y-6" dir="rtl">
+        <div className="space-y-6" dir="ltr">
             {/* Page Title */}
             <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">إدارة المساعدين</h2>
-                <p className="text-gray-500 text-sm">أضف وادير حسابات المساعدين</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Manage Assistants</h2>
+                <p className="text-gray-500 text-sm">Add and manage assistant accounts</p>
             </div>
 
             {/* Create Assistant Form */}
-            <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
+            <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-purple-100">
-                        <UserPlus className="h-6 w-6 text-purple-600" />
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-100">
+                        <UserPlus className="h-6 w-6 text-indigo-600" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-gray-800">إضافة مساعد جديد</h3>
-                        <p className="text-sm text-gray-500">إنشاء حساب جديد للمساعد</p>
+                        <h3 className="text-lg font-bold text-gray-900">Add New Assistant</h3>
+                        <p className="text-sm text-gray-500">Create a new account for the assistant</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                الاسم الكامل
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Full Name
                             </label>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                placeholder="ادخل اسم المساعد"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Enter assistant name"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 required
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                البريد الإلكتروني
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Email Address
                             </label>
                             <input
                                 type="email"
@@ -244,30 +244,30 @@ export default function AssistantsPage() {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 placeholder="example@email.com"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 required
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                كلمة المرور
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Password
                             </label>
                             <input
                                 type="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                placeholder="8 أحرف على الأقل"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="At least 8 characters"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 required
                                 minLength={8}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                رقم الهاتف (اختياري)
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Phone Number (Optional)
                             </label>
                             <input
                                 type="tel"
@@ -275,7 +275,7 @@ export default function AssistantsPage() {
                                 value={formData.phone}
                                 onChange={handleInputChange}
                                 placeholder="xxxxxxxxxxx"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             />
                         </div>
                     </div>
@@ -284,25 +284,25 @@ export default function AssistantsPage() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="bg-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors shadow-2xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <UserPlus className="h-5 w-5" />
-                            {submitting ? 'جاري الإضافة...' : 'إضافة مساعد'}
+                            {submitting ? 'Adding...' : 'Add Assistant'}
                         </button>
                     </div>
                 </form>
             </div>
 
             {/* Assistants List */}
-            <div className="bg-white rounded-2xl border-2 border-black/5 shadow-md shadow-black/10 overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800">قائمة المساعدين</h3>
+            <div className="bg-white rounded-2xl border-2 border-black/5 shadow-2xl shadow-black/10 overflow-hidden">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-bold text-gray-900">Assistants List</h3>
                 </div>
 
                 {loading ? (
-                    <div className="p-8 text-center text-gray-500">جاري التحميل...</div>
+                    <div className="p-8 text-center text-gray-500">Loading...</div>
                 ) : assistants.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">لا يوجد مساعدين مسجلين</div>
+                    <div className="p-8 text-center text-gray-500">No assistants registered</div>
                 ) : (
                     <>
                         {/* Mobile cards */}
@@ -311,7 +311,7 @@ export default function AssistantsPage() {
                                 const assistantId = assistant.id || assistant._id || '';
                                 const isEditing = editingId === assistantId;
                                 const createdLabel = assistant.createdAt
-                                    ? new Date(assistant.createdAt).toLocaleDateString('ar-EG')
+                                    ? new Date(assistant.createdAt).toLocaleDateString('en-US')
                                     : '—';
                                 const phone = (assistant.phone || '').trim();
                                 const initial = (assistant.name || 'A').trim().charAt(0).toUpperCase();
@@ -319,22 +319,22 @@ export default function AssistantsPage() {
                                 return (
                                     <div
                                         key={assistantId}
-                                        className="rounded-3xl border border-gray-100 bg-white shadow-sm overflow-hidden"
+                                        className="rounded-3xl border border-gray-200 bg-white shadow-xl overflow-hidden"
                                     >
                                         <div className="p-4">
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex items-start gap-3 min-w-0">
-                                                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-500 text-white flex items-center justify-center font-extrabold shrink-0">
+                                                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-500 text-white flex items-center justify-center font-extrabold shrink-0">
                                                         {initial}
                                                     </div>
-                                                    <div className="min-w-0 text-right">
+                                                    <div className="min-w-0 text-left">
                                                         {isEditing ? (
                                                             <input
                                                                 type="text"
                                                                 name="name"
                                                                 value={editData.name}
                                                                 onChange={handleEditInputChange}
-                                                                className="w-full px-3 py-2 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500"
+                                                                className="w-full px-3 py-2 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500"
                                                             />
                                                         ) : (
                                                             <div className="text-base font-extrabold text-gray-900 truncate">
@@ -342,9 +342,9 @@ export default function AssistantsPage() {
                                                             </div>
                                                         )}
 
-                                                        <div className="mt-1 flex items-center justify-end gap-2 text-xs text-gray-500">
+                                                        <div className="mt-1 flex items-center justify-start gap-2 text-xs text-gray-500">
                                                             <span className="inline-flex items-center gap-1 truncate max-w-[220px]">
-                                                                <Mail className="h-4 w-4 text-gray-400 shrink-0" />
+                                                                <Mail className="h-4 w-4 text-[#80848E] shrink-0" />
                                                                 <span className="truncate">{assistant.email}</span>
                                                             </span>
                                                         </div>
@@ -357,16 +357,16 @@ export default function AssistantsPage() {
                                                             <button
                                                                 onClick={() => handleUpdate(assistantId)}
                                                                 className="p-2 text-green-600 hover:bg-green-50 rounded-2xl transition-colors"
-                                                                title="حفظ"
-                                                                aria-label="حفظ"
+                                                                title="Save"
+                                                                aria-label="Save"
                                                             >
                                                                 <Check className="h-5 w-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => setEditingId(null)}
                                                                 className="p-2 text-red-600 hover:bg-red-50 rounded-2xl transition-colors"
-                                                                title="إلغاء"
-                                                                aria-label="إلغاء"
+                                                                title="Cancel"
+                                                                aria-label="Cancel"
                                                             >
                                                                 <X className="h-5 w-5" />
                                                             </button>
@@ -376,16 +376,16 @@ export default function AssistantsPage() {
                                                             <button
                                                                 onClick={() => handleEdit(assistant)}
                                                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-2xl transition-colors"
-                                                                title="تعديل"
-                                                                aria-label="تعديل"
+                                                                title="Edit"
+                                                                aria-label="Edit"
                                                             >
                                                                 <Edit2 className="h-5 w-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(assistantId)}
                                                                 className="p-2 text-red-600 hover:bg-red-50 rounded-2xl transition-colors"
-                                                                title="حذف"
-                                                                aria-label="حذف"
+                                                                title="Delete"
+                                                                aria-label="Delete"
                                                             >
                                                                 <Trash2 className="h-5 w-5" />
                                                             </button>
@@ -395,15 +395,15 @@ export default function AssistantsPage() {
                                             </div>
 
                                             <div className="mt-3 grid grid-cols-2 gap-2">
-                                                <div className="rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
-                                                    <div className="text-[11px] text-gray-500">الهاتف</div>
+                                                <div className="rounded-2xl border border-gray-200 bg-[#FCFCFC] px-3 py-2">
+                                                    <div className="text-[11px] text-gray-500">Phone</div>
                                                     {isEditing ? (
                                                         <input
                                                             type="tel"
                                                             name="phone"
                                                             value={editData.phone}
                                                             onChange={handleEditInputChange}
-                                                            className="mt-1 w-full px-3 py-2 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 bg-white"
+                                                            className="mt-1 w-full px-3 py-2 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 bg-white"
                                                             placeholder="xxxxxxxxxxx"
                                                         />
                                                     ) : phone ? (
@@ -411,15 +411,15 @@ export default function AssistantsPage() {
                                                             href={`tel:${phone}`}
                                                             className="mt-1 inline-flex items-center gap-2 text-sm font-bold text-gray-900"
                                                         >
-                                                            <Phone className="h-4 w-4 text-gray-400" />
+                                                            <Phone className="h-4 w-4 text-[#80848E]" />
                                                             <span dir="ltr">{phone}</span>
                                                         </a>
                                                     ) : (
-                                                        <div className="mt-1 text-sm font-bold text-gray-400">—</div>
+                                                        <div className="mt-1 text-sm font-bold text-[#80848E]">—</div>
                                                     )}
                                                 </div>
-                                                <div className="rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
-                                                    <div className="text-[11px] text-gray-500">تاريخ الإنشاء</div>
+                                                <div className="rounded-2xl border border-gray-200 bg-[#FCFCFC] px-3 py-2">
+                                                    <div className="text-[11px] text-gray-500">Date Created</div>
                                                     <div className="mt-1 text-sm font-bold text-gray-900">{createdLabel}</div>
                                                 </div>
                                             </div>
@@ -432,22 +432,22 @@ export default function AssistantsPage() {
                         {/* Desktop table */}
                         <div className="hidden md:block overflow-x-auto">
                         <table className="w-full">
-                            <thead className="bg-gray-50 border-b border-gray-100">
+                            <thead className="bg-[#FCFCFC] border-b border-gray-200">
                                 <tr>
-                                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">الاسم</th>
-                                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">البريد الإلكتروني</th>
-                                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">الهاتف</th>
-                                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">تاريخ الإنشاء</th>
-                                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">الإجراءات</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-500">Name</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-500">Email</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-500">Phone</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-500">Date Created</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-500">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-[#2B2D31]">
                                 {assistants.map((assistant) => {
                                     const assistantId = assistant.id || assistant._id || '';
                                     const isEditing = editingId === assistantId;
                                     
                                     return (
-                                        <tr key={assistantId} className="hover:bg-gray-50 transition-colors">
+                                        <tr key={assistantId} className="hover:bg-[#FCFCFC] transition-colors">
                                             <td className="px-6 py-4">
                                                 {isEditing ? (
                                                     <input
@@ -455,40 +455,40 @@ export default function AssistantsPage() {
                                                         name="name"
                                                         value={editData.name}
                                                         onChange={handleEditInputChange}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                                        className="w-full px-3 py-2 border border-[#35373C] rounded-lg focus:ring-2 focus:ring-indigo-500"
                                                     />
                                                 ) : (
-                                                    <span className="text-gray-800 font-medium">{assistant.name}</span>
+                                                    <span className="text-gray-900 font-medium">{assistant.name}</span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-gray-600">
+                                            <td className="px-6 py-4 text-gray-500">
                                                 <div className="flex items-center gap-2">
-                                                    <Mail className="h-4 w-4 text-gray-400" />
+                                                    <Mail className="h-4 w-4 text-[#80848E]" />
                                                     {assistant.email}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-gray-600">
+                                            <td className="px-6 py-4 text-gray-500">
                                                 {isEditing ? (
                                                     <input
                                                         type="tel"
                                                         name="phone"
                                                         value={editData.phone}
                                                         onChange={handleEditInputChange}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                                        className="w-full px-3 py-2 border border-[#35373C] rounded-lg focus:ring-2 focus:ring-indigo-500"
                                                     />
                                                 ) : (
                                                     assistant.phone ? (
                                                         <div className="flex items-center gap-2">
-                                                            <Phone className="h-4 w-4 text-gray-400" />
+                                                            <Phone className="h-4 w-4 text-[#80848E]" />
                                                             {assistant.phone}
                                                         </div>
                                                     ) : (
-                                                        <span className="text-gray-400">-</span>
+                                                        <span className="text-[#80848E]">-</span>
                                                     )
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-gray-600">
-                                                {new Date(assistant.createdAt).toLocaleDateString('ar-EG')}
+                                            <td className="px-6 py-4 text-gray-500">
+                                                {new Date(assistant.createdAt).toLocaleDateString('en-US')}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
@@ -497,14 +497,14 @@ export default function AssistantsPage() {
                                                             <button
                                                                 onClick={() => handleUpdate(assistantId)}
                                                                 className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                                                                title="حفظ"
+                                                                title="Save"
                                                             >
                                                                 <Check className="h-5 w-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => setEditingId(null)}
                                                                 className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                                title="إلغاء"
+                                                                title="Cancel"
                                                             >
                                                                 <X className="h-5 w-5" />
                                                             </button>
@@ -514,14 +514,14 @@ export default function AssistantsPage() {
                                                             <button
                                                                 onClick={() => handleEdit(assistant)}
                                                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                                title="تعديل"
+                                                                title="Edit"
                                                             >
                                                                 <Edit2 className="h-5 w-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(assistantId)}
                                                                 className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                                title="حذف"
+                                                                title="Delete"
                                                             >
                                                                 <Trash2 className="h-5 w-5" />
                                                             </button>
@@ -541,4 +541,3 @@ export default function AssistantsPage() {
         </div>
     );
 }
-

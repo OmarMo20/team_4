@@ -84,19 +84,19 @@ function VerifyOTPContent() {
     };
 
     const getTitle = () => {
-        return type === 'password-reset' ? 'نسيت كلمة المرور' : 'ضع كود التفعيل';
+        return type === 'password-reset' ? 'Forgot Password' : 'Enter Activation Code';
     };
 
     const getSubtitle = () => {
-        return `اكتب الكود المرسل إلى ${email}`;
+        return `Enter the code sent to ${email}`;
     };
 
     return (
         <AuthLayout title={getTitle()} subtitle={getSubtitle()}>
             <div className="flex flex-col items-center">
                 {/* Icon */}
-                <div className="mb-4 xs:mb-6 p-3 xs:p-4 bg-purple-100 rounded-full">
-                    <Shield className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 text-purple-600" />
+                <div className="mb-4 xs:mb-6 p-3 xs:p-4 bg-indigo-100 rounded-full">
+                    <Shield className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 text-indigo-600" />
                 </div>
 
                 {/* OTP Input */}
@@ -111,20 +111,20 @@ function VerifyOTPContent() {
                 </div>
 
                 {/* Resend Link */}
-                <div className="mb-4 xs:mb-6 text-xs xs:text-sm text-gray-600 text-center px-2">
+                <div className="mb-4 xs:mb-6 text-xs xs:text-sm text-gray-500 text-center px-2">
                     <div className="leading-relaxed">
-                        لم تستلم كود؟{' '}
+                        Didn't receive a code?{' '}
                         {canResend ? (
                             <button
                                 onClick={handleResend}
-                                className="text-purple-600 hover:underline font-medium"
+                                className="text-indigo-600 hover:underline font-medium"
                                 disabled={isLoading}
                             >
-                                إعادة إرسال
+                                Resend
                             </button>
                         ) : (
-                            <span className="text-gray-400">
-                                إعادة إرسال ({resendTimer}ث)
+                            <span className="text-[#80848E]">
+                                Resend ({resendTimer}s)
                             </span>
                         )}
                     </div>
@@ -138,7 +138,7 @@ function VerifyOTPContent() {
                     isLoading={isLoading}
                     disabled={otp.length !== 6}
                 >
-                    {type === 'password-reset' ? 'متابعة' : 'إنهاء'}
+                    {type === 'password-reset' ? 'Continue' : 'Finish'}
                 </Button>
             </div>
         </AuthLayout>
@@ -148,9 +148,9 @@ function VerifyOTPContent() {
 export default function VerifyOTPPage() {
     return (
         <Suspense fallback={
-            <AuthLayout title="جاري التحميل...">
+            <AuthLayout title="Loading...">
                 <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
                 </div>
             </AuthLayout>
         }>

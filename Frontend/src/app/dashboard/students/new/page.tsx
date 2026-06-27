@@ -45,17 +45,17 @@ export default function AddStudentPage() {
             });
 
             if (response.success) {
-                alert(`تم إنشاء الطالب بنجاح!\nكود الطالب: ${response.data.studentCode || response.data.nationalId}\nكلمة المرور: ${(response.data as any).password || 'تم الإنشاء'}`);
+                alert(`Student created successfully!\nStudent Code: ${response.data.studentCode || response.data.nationalId}\nPassword: ${(response.data as any).password || 'Created'}`);
                 router.push('/dashboard/students');
             }
         } catch (error: any) {
             console.error('Error creating student:', error);
-            alert(error.response?.data?.message || 'حدث خطأ أثناء إنشاء الطالب');
+            alert(error.response?.data?.message || 'An error occurred while creating the student');
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputChangeElement>) => {
+        const { name, value, type, checked } = e.target as any;
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
@@ -63,43 +63,43 @@ export default function AddStudentPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-left" dir="ltr">
             {/* Page Title */}
             <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">إضافة طالب جديد</h2>
-                <p className="text-gray-500 text-sm">أضف بيانات الطالب لإنشاء كود فريد له</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Add New Student</h2>
+                <p className="text-gray-500 text-sm">Add student details to generate a unique code</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Student Information */}
-                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
+                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-purple-100">
-                            <User className="h-6 w-6 text-purple-600" />
+                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-100">
+                            <User className="h-6 w-6 text-indigo-600" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">معلومات الطالب</h3>
-                            <p className="text-sm text-gray-500">البيانات الأساسية للطالب</p>
+                            <h3 className="text-lg font-bold text-gray-900">Student Details</h3>
+                            <p className="text-sm text-gray-500">Basic student information</p>
                         </div>
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                اسم الطالب/ة الكامل
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Student Full Name
                             </label>
                             <input
                                 type="text"
                                 name="studentName"
                                 value={formData.studentName}
                                 onChange={handleInputChange}
-                                placeholder="ادخل اسم الطالب بالكامل"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Enter student's full name"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                هاتف الطالب/ة
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Student Phone
                             </label>
                             <input
                                 type="tel"
@@ -107,12 +107,12 @@ export default function AddStudentPage() {
                                 value={formData.studentPhone}
                                 onChange={handleInputChange}
                                 placeholder="xxxxxxxxxxx"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                البريد الإلكتروني
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Email Address
                             </label>
                             <input
                                 type="email"
@@ -120,26 +120,26 @@ export default function AddStudentPage() {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 placeholder="example@email.com"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Parent Information */}
-                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
+                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-100">
                             <Phone className="h-6 w-6 text-blue-600" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">معلومات ولي الأمر</h3>
-                            <p className="text-sm text-gray-500">بيانات التواصل مع ولي الأمر</p>
+                            <h3 className="text-lg font-bold text-gray-900">Parent Information</h3>
+                            <p className="text-sm text-gray-500">Parent contact details</p>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            هاتف ولي الأمر
+                        <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            Parent Phone
                         </label>
                         <input
                             type="tel"
@@ -147,102 +147,102 @@ export default function AddStudentPage() {
                             value={formData.parentPhone}
                             onChange={handleInputChange}
                             placeholder="xxxxxxxxxxx"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                     </div>
                 </div>
 
                 {/* Academic Details */}
-                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
+                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-100">
                             <GraduationCap className="h-6 w-6 text-green-600" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">التفاصيل الأكاديمية</h3>
-                            <p className="text-sm text-gray-500">الصف الدراسي والرحلة التعليمية</p>
+                            <h3 className="text-lg font-bold text-gray-900">Academic Details</h3>
+                            <p className="text-sm text-gray-500">Academic grade and details</p>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            الصف الدراسي
+                        <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            Grade
                         </label>
                         <input
                             type="text"
                             name="grade"
                             value={formData.grade}
                             onChange={handleInputChange}
-                            placeholder="ادخل الصف الدراسي"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Enter student's grade"
+                            className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             required
                         />
                     </div>
                 </div>
 
                 {/* Schedule and Location */}
-                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
+                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-100">
                             <MapPin className="h-6 w-6 text-yellow-600" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">السنتر والموعد</h3>
-                            <p className="text-sm text-gray-500">مكان الدراسة ومواعيد الحضور</p>
+                            <h3 className="text-lg font-bold text-gray-900">Center & Schedule</h3>
+                            <p className="text-sm text-gray-500">Learning center location and timings</p>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                السنتر
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Center
                             </label>
                             <input
                                 type="text"
                                 name="center"
                                 value={formData.center}
                                 onChange={handleInputChange}
-                                placeholder="ادخل الصف الدراسي"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                placeholder="Enter center"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                الموعد
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Schedule
                             </label>
                             <input
                                 type="text"
                                 name="schedule"
                                 value={formData.schedule}
                                 onChange={handleInputChange}
-                                placeholder="ادخل الموعد"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                placeholder="Enter schedule"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Financial Information */}
-                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
+                <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-100">
                             <Wallet className="h-6 w-6 text-green-600" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">المعلومات المالية</h3>
-                            <p className="text-sm text-gray-500">الاشتراك الشهري وحالة السداد</p>
+                            <h3 className="text-lg font-bold text-gray-900">Financial Information</h3>
+                            <p className="text-sm text-gray-500">Monthly subscription and payment status</p>
                         </div>
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                الاشتراك الشهري (ج.م)
+                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                                Monthly Fee (EGP)
                             </label>
                             <input
                                 type="number"
                                 name="monthlyFee"
                                 value={formData.monthlyFee}
                                 onChange={handleInputChange}
-                                placeholder="ادخل الاشتراك الشهري (اختياري)"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="Enter monthly fee (optional)"
+                                className="w-full px-4 py-3 border border-[#35373C] rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 min="0"
                             />
                         </div>
@@ -253,10 +253,10 @@ export default function AddStudentPage() {
                                 id="paidUntil"
                                 checked={formData.paidUntil}
                                 onChange={handleInputChange}
-                                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                className="w-4 h-4 text-indigo-600 border-[#35373C] rounded focus:ring-indigo-500"
                             />
-                            <label htmlFor="paidUntil" className="text-sm text-gray-700">
-                                تم سداد الشهر
+                            <label htmlFor="paidUntil" className="text-sm text-[#DBDEE1]">
+                                Month Paid
                             </label>
                         </div>
                     </div>
@@ -266,10 +266,10 @@ export default function AddStudentPage() {
                 <div>
                     <button
                         type="submit"
-                        className="bg-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors shadow-md flex items-center gap-2"
+                        className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors shadow-2xl flex items-center gap-2"
                     >
                         <User className="h-5 w-5" />
-                        إضافة طالب
+                        Add Student
                     </button>
                 </div>
             </form>

@@ -220,10 +220,10 @@ export async function syncPendingActions(
         if (onProgress) {
           // For remove_attendance, show a different message
           if (action.type === 'remove_attendance') {
-            onProgress(action.id, 'failed', `فشل في حذف حضور الطالب - قد يكون تم حذفه مسبقاً`);
+            onProgress(action.id, 'failed', `Failed to delete student attendance - it might have been deleted already`);
           } else {
-            const studentCode = action.data?.studentCode || action.data?.qrToken || 'غير معروف';
-            onProgress(action.id, 'failed', `الطالب بالكود ${studentCode} لم يتم تسجيله`);
+            const studentCode = action.data?.studentCode || action.data?.qrToken || 'unknown';
+            onProgress(action.id, 'failed', `Student with code ${studentCode} was not registered`);
           }
         }
         // Don't count as failed - it's expected behavior
@@ -251,8 +251,8 @@ export async function syncPendingActions(
         console.warn(`⚠️ Removed action after ${MAX_RETRIES} retries: ${action.id}`, { type: action.type });
         // Notify progress callback with error
         if (onProgress) {
-          const studentCode = action.data?.studentCode || action.data?.qrToken || 'غير معروف';
-          onProgress(action.id, 'failed', `الطالب بالكود ${studentCode} لم يتم تسجيله`);
+          const studentCode = action.data?.studentCode || action.data?.qrToken || 'unknown';
+          onProgress(action.id, 'failed', `Student with code ${studentCode} was not registered`);
         }
       } else {
         // Keep for retry
@@ -260,8 +260,8 @@ export async function syncPendingActions(
         failed++;
         // Notify progress callback with error (will retry later)
         if (onProgress) {
-          const studentCode = action.data?.studentCode || action.data?.qrToken || 'غير معروف';
-          onProgress(action.id, 'failed', `فشل في تسجيل الطالب بالكود ${studentCode} - سيتم إعادة المحاولة`);
+          const studentCode = action.data?.studentCode || action.data?.qrToken || 'unknown';
+          onProgress(action.id, 'failed', `Failed to register student with code ${studentCode} - will retry`);
         }
       }
     }

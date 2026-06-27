@@ -4,7 +4,7 @@ export const extractErrorMessage = (error: unknown): string => {
     if (error instanceof AxiosError) {
         // Network errors (no response from server)
         if (error.code === 'ERR_NETWORK' || error.message === 'Network Error' || !error.response) {
-            return 'خطأ في الاتصال بالخادم. يرجى التحقق من الاتصال بالإنترنت أو تأكد من أن الخادم يعمل.';
+            return 'Server connection error. Please check your internet connection or make sure the server is running.';
         }
 
         // Check if server sent a specific error message
@@ -14,31 +14,31 @@ export const extractErrorMessage = (error: unknown): string => {
 
         // Check for specific status codes
         if (error.response?.status === 400) {
-            return 'بيانات غير صالحة. يرجى التحقق من المدخلات.';
+            return 'Invalid data. Please check the inputs.';
         }
         if (error.response?.status === 401) {
-            return 'غير مصرح لك بالوصول. يرجى تسجيل الدخول.';
+            return 'Unauthorized access. Please log in.';
         }
         if (error.response?.status === 403) {
-            return 'ليس لديك صلاحية للقيام بهذا الإجراء.';
+            return 'You do not have permission to perform this action.';
         }
         if (error.response?.status === 404) {
-            return 'المورد غير موجود.';
+            return 'Resource not found.';
         }
         if (error.response?.status === 500) {
-            return 'حدث خطأ في الخادم. يرجى المحاولة لاحقاً.';
+            return 'A server error occurred. Please try again later.';
         }
     }
 
     if (error instanceof Error) {
         // Handle network-related error messages
         if (error.message.includes('Network') || error.message.includes('network')) {
-            return 'خطأ في الاتصال بالخادم. يرجى التحقق من الاتصال بالإنترنت.';
+            return 'Server connection error. Please check your internet connection.';
         }
         return error.message;
     }
 
-    return 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
+    return 'An unexpected error occurred. Please try again.';
 };
 
 export const extractFormErrors = (error: unknown): Record<string, string> => {

@@ -16,30 +16,30 @@ const createAssistantValidation = [
     body('name')
         .trim()
         .notEmpty()
-        .withMessage('الاسم مطلوب')
+        .withMessage('Name is required')
         .isLength({ min: 2, max: 50 })
-        .withMessage('يجب أن يكون الاسم بين 2 و 50 حرفاً')
+        .withMessage('Name must be between 2 and 50 characters')
         .matches(/^[a-zA-Z\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s]+$/)
-        .withMessage('يمكن أن يحتوي الاسم على الحروف والمسافات فقط'),
+        .withMessage('Name can only contain letters and spaces'),
 
     body('email')
         .trim()
         .notEmpty()
-        .withMessage('البريد الإلكتروني مطلوب')
+        .withMessage('Email is required')
         .isEmail()
-        .withMessage('من فضلك أدخل بريدًا إلكترونيًا صالحًا')
+        .withMessage('Please enter a valid email address')
         .normalizeEmail(),
 
     body('password')
         .trim()
         .notEmpty()
-        .withMessage('كلمة المرور مطلوبة')
+        .withMessage('Password is required')
         .isLength({ min: 8 })
-        .withMessage('يجب أن تكون كلمة المرور 8 أحرف على الأقل')
+        .withMessage('Password must be at least 8 characters')
         .matches(/\d/)
-        .withMessage('يجب أن تحتوي كلمة المرور على رقم واحد على الأقل')
+        .withMessage('Password must contain at least one number')
         .matches(/[a-zA-Z]/)
-        .withMessage('يجب أن تحتوي كلمة المرور على حرف واحد على الأقل'),
+        .withMessage('Password must contain at least one letter'),
 
     body('phone')
         .optional({ nullable: true, checkFalsy: true })
@@ -48,7 +48,7 @@ const createAssistantValidation = [
             // If phone is provided, validate it
             if (value && value.length > 0) {
                 if (!/^[0-9]{10,15}$/.test(value)) {
-                    throw new Error('رقم الهاتف يجب أن يكون بين 10 و 15 رقم');
+                    throw new Error('Phone number must be between 10 and 15 digits');
                 }
             }
             return true;
@@ -64,4 +64,3 @@ router.patch('/:id', assistantController.updateAssistant);
 router.delete('/:id', assistantController.deleteAssistant);
 
 module.exports = router;
-

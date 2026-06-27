@@ -75,15 +75,15 @@ api.interceptors.response.use(
                         success: false,
                         status: 'fail',
                         message:
-                            'لا تملك صلاحية لتنفيذ هذا الإجراء. يرجى التأكد من أن دورك في النظام هو "مدرس" أو "مدير".',
+                            'You do not have permission to perform this action. Please verify that your role in the system is "teacher" or "admin".',
                     };
                 } else {
                     const statusMessages: Record<number, string> = {
-                        400: 'طلب غير صالح',
-                        401: 'غير مصرح - يرجى تسجيل الدخول',
-                        403: 'لا تملك صلاحية لتنفيذ هذا الإجراء',
-                        404: 'المورد غير موجود',
-                        500: 'حدث خطأ في الخادم',
+                        400: 'Invalid request',
+                        401: 'Unauthorized - please login',
+                        403: 'You do not have permission to perform this action',
+                        404: 'Resource not found',
+                        500: 'An error occurred in the server',
                     };
                     res.data = {
                         success: false,
@@ -91,7 +91,7 @@ api.interceptors.response.use(
                         message:
                             statusMessages[res.status] ||
                             res.statusText ||
-                            'حدث خطأ غير متوقع',
+                            'An unexpected error occurred',
                     };
                 }
             }
@@ -125,7 +125,7 @@ api.interceptors.response.use(
                     };
                     // Next overlay often renders object literals as {}; use string + JSON for clarity
                     console.error(
-                        '❌ Network error (no HTTP response — غالباً: السيرفر مش شغال، رابط API غلط، أو CORS):\n',
+                        '❌ Network error (no HTTP response — usually: server not running, wrong API link, or CORS):\n',
                         JSON.stringify(details, null, 2)
                     );
                 } else if (isTimeout) {

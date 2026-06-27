@@ -20,7 +20,7 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
         studentName: '',
         studentCode: '',
         examTitle: '',
-        fullMark: '100', // Default full mark
+        fullMark: '100',
         score: '',
         status: 'present',
         notes: ''
@@ -41,7 +41,6 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
                 try {
                     const res = await getStudents(code);
                     if (res.success && res.data.length > 0) {
-                        // Find exact match or first result
                         const student = res.data.find(s => s.nationalId === code) || res.data[0];
                         setFormData(prev => ({ ...prev, studentName: student.fullName }));
                     } else {
@@ -80,28 +79,27 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
         e.preventDefault();
         
         if (isScoreInvalid) {
-            showToast('الدرجة لا يمكن أن تكون أكبر من الدرجة النهائية', 'error');
+            showToast('Score cannot be greater than full mark', 'error');
             return;
         }
 
         if (!formData.studentName) {
-            showToast('يجب إدخال كود طالب صحيح لعرض الاسم', 'error');
+            showToast('A valid student code must be entered to display the name', 'error');
             return;
         }
 
         setLoading(true);
         try {
-            // Need to pass data that addSingleResult expects
             await onSubmit({
                 ...formData,
                 score: Number(formData.score),
                 fullMark: Number(formData.fullMark)
             });
-            showToast('تم حفظ الدرجة بنجاح', 'success');
+            showToast('Grade saved successfully', 'success');
             onClose();
         } catch (error: any) {
             console.error(error);
-            const message = error.response?.data?.message || 'حدث خطأ أثناء حفظ الدرجة';
+            const message = error.response?.data?.message || 'An error occurred while saving the grade';
             showToast(message, 'error');
         } finally {
             setLoading(false);
@@ -110,60 +108,60 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl animate-in fade-in zoom-in duration-200 overflow-hidden max-h-[95vh] flex flex-col" dir="rtl">
+            <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl animate-in fade-in zoom-in duration-200 overflow-hidden max-h-[95vh] flex flex-col text-left" dir="ltr">
                 {/* Header */}
-                <div className="p-6 md:p-8 bg-[#F8F7FF] border-b border-gray-100 flex justify-between items-center shrink-0">
+                <div className="p-6 md:p-8 bg-[#F8F7FF] border-b border-gray-200 flex justify-between items-center shrink-0">
+                    <div className="flex items-center gap-4 text-left">
+                        <div className="h-12 w-12 md:h-16 md:w-16 bg-[#EBE4FF] rounded-2xl md:rounded-[1.5rem] flex items-center justify-center">
+                            <GraduationCap className="h-7 w-7 md:h-9 md:w-9 text-[#4F46E5]" />
+                        </div>
+                        <div className="text-left">
+                            <h2 className="text-xl md:text-3xl font-bold text-gray-900">Add New Grade</h2>
+                            <p className="text-sm md:text-lg text-[#80848E] font-medium">Enter student exam grades</p>
+                        </div>
+                    </div>
+
                     <button 
                         onClick={onClose}
-                        className="h-10 w-10 md:h-12 md:w-12 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 transition-colors bg-white shadow-sm border border-gray-100"
+                        className="h-10 w-10 md:h-12 md:w-12 rounded-full hover:bg-gray-200 flex items-center justify-center text-[#80848E] transition-colors bg-white shadow-xl border border-gray-200"
                     >
                         <X className="h-6 w-6 md:h-7 md:w-7" />
                     </button>
-                    
-                    <div className="flex items-center gap-4">
-                        <div className="text-right">
-                            <h2 className="text-xl md:text-3xl font-bold text-gray-900">إضافة درجة جديدة</h2>
-                            <p className="text-sm md:text-lg text-gray-400 font-medium">إدخال درجات الطلاب في الامتحانات</p>
-                        </div>
-                        <div className="h-12 w-12 md:h-16 md:w-16 bg-[#EBE4FF] rounded-2xl md:rounded-[1.5rem] flex items-center justify-center">
-                            <GraduationCap className="h-7 w-7 md:h-9 md:w-9 text-[#6339AC]" />
-                        </div>
-                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-6 md:space-y-8 overflow-y-auto flex-1 custom-scrollbar">
+                <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-6 md:space-y-8 overflow-y-auto flex-1 custom-scrollbar text-left">
                     {/* Student Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
                         <div className="space-y-3">
-                            <label className="flex items-center justify-end gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
-                                <span>كود الطالب</span>
-                                <Hash className="h-5 w-5 md:h-6 md:w-6 text-[#6339AC]/70" />
+                            <label className="flex items-center justify-start gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
+                                <Hash className="h-5 w-5 md:h-6 md:w-6 text-[#4F46E5]/70" />
+                                <span>Student Code</span>
                             </label>
                             <input 
                                 required
                                 type="text" 
-                                className="w-full px-6 py-4 md:py-5 rounded-2xl border-2 border-transparent focus:border-purple-400 outline-none transition-all text-right text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
-                                placeholder="أدخل كود الطالب"
+                                className="w-full px-6 py-4 md:py-5 rounded-2xl border-2 border-transparent focus:border-indigo-400 outline-none transition-all text-left text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
+                                placeholder="Enter student code"
                                 value={formData.studentCode}
                                 onChange={e => setFormData({...formData, studentCode: e.target.value})}
                             />
                         </div>
                         <div className="space-y-3 relative">
-                            <label className="flex items-center justify-end gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
-                                <span>اسم الطالب</span>
-                                <User className="h-5 w-5 md:h-6 md:w-6 text-[#6339AC]/70" />
+                            <label className="flex items-center justify-start gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
+                                <User className="h-5 w-5 md:h-6 md:w-6 text-[#4F46E5]/70" />
+                                <span>Student Name</span>
                             </label>
                             <div className="relative">
                                 <input 
                                     readOnly
                                     type="text" 
-                                    className="w-full px-6 py-4 md:py-5 rounded-2xl border-2 border-transparent outline-none transition-all text-right text-lg md:text-xl font-medium bg-[#F0F0F0] text-[#717171] cursor-not-allowed"
-                                    placeholder={fetchingName ? 'جاري التحميل...' : 'سيظهر الاسم تلقائياً'}
+                                    className="w-full px-6 py-4 md:py-5 rounded-2xl border-2 border-transparent outline-none transition-all text-left text-lg md:text-xl font-medium bg-[#F0F0F0] text-[#717171] cursor-not-allowed"
+                                    placeholder={fetchingName ? 'Loading...' : 'Name will appear automatically'}
                                     value={formData.studentName}
                                 />
                                 {fetchingName && (
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                                        <Loader2 className="h-5 w-5 text-purple-500 animate-spin" />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                        <Loader2 className="h-5 w-5 text-indigo-500 animate-spin" />
                                     </div>
                                 )}
                             </div>
@@ -173,23 +171,23 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
                     {/* Exam and Score */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
                         <div className="space-y-3">
-                            <label className="flex items-center justify-end gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
-                                <span>اسم الامتحان</span>
-                                <BookOpen className="h-5 w-5 md:h-6 md:w-6 text-[#6339AC]/70" />
+                            <label className="flex items-center justify-start gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
+                                <BookOpen className="h-5 w-5 md:h-6 md:w-6 text-[#4F46E5]/70" />
+                                <span>Exam Name</span>
                             </label>
                             <input 
                                 required
                                 type="text"
-                                className="w-full px-6 py-4 md:py-5 rounded-2xl border-2 border-transparent focus:border-purple-400 outline-none transition-all text-right text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
-                                placeholder="أدخل اسم الامتحان"
+                                className="w-full px-6 py-4 md:py-5 rounded-2xl border-2 border-transparent focus:border-indigo-400 outline-none transition-all text-left text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
+                                placeholder="Enter exam name"
                                 value={formData.examTitle}
                                 onChange={e => setFormData({...formData, examTitle: e.target.value})}
                             />
                         </div>
                         <div className="space-y-3">
-                            <label className="flex items-center justify-end gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
-                                <span>درجة الطالب</span>
-                                <Award className="h-5 w-5 md:h-6 md:w-6 text-[#6339AC]/70" />
+                            <label className="flex items-center justify-start gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
+                                <Award className="h-5 w-5 md:h-6 md:w-6 text-[#4F46E5]/70" />
+                                <span>Student Grade</span>
                             </label>
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-3">
@@ -198,8 +196,8 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
                                             required
                                             type="number" 
                                             min="0"
-                                            className={`w-full px-6 py-4 md:py-5 rounded-2xl border-2 outline-none transition-all text-right text-lg md:text-xl font-medium ${isScoreInvalid ? 'border-red-400 bg-red-50' : 'border-transparent bg-[#F9F9F9] focus:border-purple-400'}`}
-                                            placeholder="الدرجة"
+                                            className={`w-full px-6 py-4 md:py-5 rounded-2xl border-2 outline-none transition-all text-left text-lg md:text-xl font-medium ${isScoreInvalid ? 'border-red-400 bg-red-50' : 'border-transparent bg-[#F9F9F9] focus:border-indigo-400'}`}
+                                            placeholder="Score"
                                             value={formData.score}
                                             onChange={e => setFormData({...formData, score: e.target.value})}
                                         />
@@ -210,7 +208,7 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
                                             required
                                             type="number" 
                                             min="1"
-                                            className="w-full px-4 py-4 md:py-5 rounded-2xl border-2 border-transparent focus:border-purple-400 outline-none transition-all text-center text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
+                                            className="w-full px-4 py-4 md:py-5 rounded-2xl border-2 border-transparent focus:border-indigo-400 outline-none transition-all text-center text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
                                             placeholder="100"
                                             value={formData.fullMark}
                                             onChange={e => setFormData({...formData, fullMark: e.target.value})}
@@ -218,9 +216,9 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
                                     </div>
                                 </div>
                                 {isScoreInvalid && (
-                                    <div className="flex items-center justify-end gap-2 text-red-500 text-sm font-bold animate-pulse">
-                                        <span>الدرجة أكبر من الدرجة النهائية!</span>
+                                    <div className="flex items-center justify-start gap-2 text-red-500 text-sm font-bold animate-pulse">
                                         <AlertCircle className="h-4 w-4" />
+                                        <span>Score is greater than full mark!</span>
                                     </div>
                                 )}
                             </div>
@@ -229,12 +227,12 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
 
                     {/* Notes */}
                     <div className="space-y-3">
-                        <label className="flex items-center justify-end gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
-                            <span>ملاحظات</span>
+                        <label className="flex items-center justify-start gap-2 text-lg md:text-xl font-bold text-[#414141] mb-1">
+                            <span>Notes</span>
                         </label>
                         <textarea 
-                            className="w-full px-6 py-5 rounded-[1.5rem] border-2 border-transparent focus:border-purple-400 outline-none transition-all h-36 resize-none text-right text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
-                            placeholder="أي ملاحظات إضافية..."
+                            className="w-full px-6 py-5 rounded-[1.5rem] border-2 border-transparent focus:border-indigo-400 outline-none transition-all h-36 resize-none text-left text-lg md:text-xl font-medium bg-[#F9F9F9] placeholder:text-gray-300"
+                            placeholder="Any additional notes..."
                             value={formData.notes}
                             onChange={e => setFormData({...formData, notes: e.target.value})}
                         />
@@ -244,16 +242,16 @@ export default function AddGradeModal({ isOpen, onClose, onSubmit }: AddGradeMod
                         <button 
                             type="submit" 
                             disabled={loading}
-                            className="flex-[1.5] px-8 py-5 md:py-6 rounded-2xl font-bold text-white bg-[#6339AC] hover:bg-purple-800 transition-all shadow-xl shadow-purple-200 disabled:opacity-70 disabled:cursor-not-allowed text-xl md:text-2xl"
+                            className="flex-[1.5] px-8 py-5 md:py-6 rounded-2xl font-bold text-white bg-[#4F46E5] hover:bg-indigo-800 transition-all shadow-xl shadow-purple-200 disabled:opacity-70 disabled:cursor-not-allowed text-xl md:text-2xl"
                         >
-                            {loading ? 'جاري الحفظ...' : 'حفظ الدرجة'}
+                            {loading ? 'Saving...' : 'Save Grade'}
                         </button>
                         <button 
                             type="button" 
                             onClick={onClose}
                             className="flex-1 px-8 py-5 md:py-6 rounded-2xl font-bold text-[#414141] bg-[#F4F4F4] hover:bg-gray-200 transition-all text-xl md:text-2xl"
                         >
-                            إلغاء
+                            Cancel
                         </button>
                     </div>
                 </form>

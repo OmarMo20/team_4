@@ -30,7 +30,7 @@ const protect = catchAsync(async (req, res, next) => {
 
     // No token found
     if (!token) {
-        throw ApiError.unauthorized('تم رفض الوصول، لا يوجد رمز دخول.');
+        throw ApiError.unauthorized('Access denied, no token provided.');
     }
 
     try {
@@ -42,11 +42,11 @@ const protect = catchAsync(async (req, res, next) => {
         const user = await User.findById(decoded.id).select('+createdBy');
 
         if (!user) {
-            throw ApiError.unauthorized('المستخدم المرتبط بهذا الرمز لم يعد موجوداً.');
+            throw ApiError.unauthorized('The user associated with this token no longer exists.');
         }
 
         if (!user.isActive) {
-            throw ApiError.unauthorized('حساب المستخدم معطَّل.');
+            throw ApiError.unauthorized('User account is deactivated.');
         }
 
         // Attach user to request object
@@ -57,7 +57,7 @@ const protect = catchAsync(async (req, res, next) => {
         // For teachers/admins, use their own ID
         if (user.role === 'assistant') {
             if (!user.createdBy) {
-                throw ApiError.unauthorized('حساب المساعد غير مرتبط بمدرس. يرجى التواصل مع الدعم الفني.');
+                throw ApiError.unauthorized('Assistant account is not associated with a teacher. Please contact technical support.');
             }
             // Assistant should see data of the teacher who created them
             req.teacherId = user.createdBy;
@@ -69,10 +69,10 @@ const protect = catchAsync(async (req, res, next) => {
         next();
     } catch (error) {
         if (error.name === 'JsonWebTokenError') {
-            throw ApiError.unauthorized('رمز الدخول غير صالح.');
+            throw ApiError.unauthorized('Access token is invalid.');
         }
         if (error.name === 'TokenExpiredError') {
-            throw ApiError.unauthorized('انتهت صلاحية رمز الدخول.');
+            throw ApiError.unauthorized('Access token has expired.');
         }
         throw error;
     }
@@ -82,12 +82,12 @@ const protect = catchAsync(async (req, res, next) => {
 const restrictTo = (...roles) => {
     return (req, res, next) => {
         if (!req.user) {
-            return next(ApiError.unauthorized('يجب تسجيل الدخول للوصول لهذه الموارد.'));
+            return next(ApiError.unauthorized('You must be logged in to access these resources.'));
         }
 
         if (!roles.includes(req.user.role)) {
             return next(
-                ApiError.forbidden('لا تملك صلاحية لتنفيذ هذا الإجراء.')
+                ApiError.forbidden('You do not have permission to perform this action.')
             );
         }
 

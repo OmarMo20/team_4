@@ -57,12 +57,12 @@ exports.createStudent = async (req, res, next) => {
 
         // Validate required fields
         if (!fullName || !grade) {
-            throw new ApiError('من فضلك أدخل اسم الطالب والصف الدراسي', 400);
+            throw new ApiError('Please enter student name and grade', 400);
         }
 
         // Multi-Tenant: Validate teacherId is available
         if (!req.teacherId) {
-            throw new ApiError('غير مسموح - يجب تسجيل الدخول كمعلم', 403);
+            throw new ApiError('Unauthorized - must login as teacher', 403);
         }
 
         // Generate unique student code (stored as `nationalId` in this codebase)
@@ -103,7 +103,7 @@ exports.createStudent = async (req, res, next) => {
         }
 
         if (!student) {
-            throw new ApiError('تعذر إنشاء الطالب، حاول مرة أخرى', 500);
+            throw new ApiError('Could not create student, try again', 500);
         }
 
         // Generate & persist QR token once (do NOT regenerate if it already exists)
@@ -117,7 +117,7 @@ exports.createStudent = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'تم إنشاء الطالب بنجاح',
+            message: 'Student created successfully',
             data: {
                 ...student.toJSON(),
                 studentCode: studentCode,
@@ -141,12 +141,12 @@ exports.createStudentsBatch = async (req, res, next) => {
 
         // Validate input
         if (!students || !Array.isArray(students) || students.length === 0) {
-            throw new ApiError('يجب إرسال مصفوفة من الطلاب', 400);
+            throw new ApiError('An array of students must be sent', 400);
         }
 
         // Multi-Tenant: Validate teacherId is available
         if (!req.teacherId) {
-            throw new ApiError('غير مسموح - يجب تسجيل الدخول كمعلم', 403);
+            throw new ApiError('Unauthorized - must login as teacher', 403);
         }
 
         const success = [];
@@ -170,7 +170,7 @@ exports.createStudentsBatch = async (req, res, next) => {
                 if (!fullName || !grade) {
                     failed.push({
                         student: studentData,
-                        error: 'اسم الطالب والصف الدراسي مطلوبان'
+                        error: 'Student name and grade are required'
                     });
                     continue;
                 }
@@ -216,7 +216,7 @@ exports.createStudentsBatch = async (req, res, next) => {
                 if (!student) {
                     failed.push({
                         student: studentData,
-                        error: 'تعذر إنشاء الطالب بعد عدة محاولات'
+                        error: 'Could not create student after multiple attempts'
                     });
                     continue;
                 }
@@ -236,7 +236,7 @@ exports.createStudentsBatch = async (req, res, next) => {
                 });
             } catch (error) {
                 // Handle individual student errors
-                const errorMessage = error.message || 'خطأ غير معروف';
+                const errorMessage = error.message || 'Unknown error';
                 failed.push({
                     student: studentData,
                     error: errorMessage
@@ -246,7 +246,7 @@ exports.createStudentsBatch = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: `تم إنشاء ${success.length} طالب بنجاح${failed.length > 0 ? `، فشل ${failed.length} طالب` : ''}`,
+            message: `Successfully created ${success.length} students${failed.length > 0 ? `, failed ${failed.length} students` : ""}`,
             data: {
                 success: success,
                 failed: failed,
@@ -307,12 +307,12 @@ exports.getStudent = async (req, res, next) => {
         const student = await Student.findById(req.params.id);
 
         if (!student) {
-            throw new ApiError('لم يتم العثور على الطالب', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         // Multi-Tenant: Ensure student belongs to authenticated teacher
         if (!belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بالوصول إلى هذا الطالب', 403);
+            throw new ApiError('You are not allowed to access this student', 403);
         }
 
         res.status(200).json({
@@ -335,12 +335,12 @@ exports.updateStudent = async (req, res, next) => {
         let student = await Student.findById(req.params.id);
 
         if (!student) {
-            throw new ApiError('لم يتم العثور على الطالب', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         // Multi-Tenant: Ensure student belongs to authenticated teacher
         if (!belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بتحديث بيانات هذا الطالب', 403);
+            throw new ApiError('You are not allowed to update this student\'s data', 403);
         }
 
         // Multi-Tenant: Use scoped query for update to prevent teacherId tampering
@@ -352,7 +352,7 @@ exports.updateStudent = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم تحديث بيانات الطالب بنجاح',
+            message: 'Student details updated successfully',
             data: student
         });
     } catch (error) {
@@ -371,12 +371,12 @@ exports.deleteStudent = async (req, res, next) => {
         const student = await Student.findById(req.params.id);
 
         if (!student) {
-            throw new ApiError('لم يتم العثور على الطالب', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         // Multi-Tenant: Ensure student belongs to authenticated teacher
         if (!belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('غير مسموح لك بحذف هذا الطالب', 403);
+            throw new ApiError('You are not allowed to delete this student', 403);
         }
 
         // Multi-Tenant: Use scoped query for delete
@@ -384,7 +384,7 @@ exports.deleteStudent = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم حذف الطالب بنجاح'
+            message: 'Student deleted successfully'
         });
     } catch (error) {
         next(error);
@@ -402,7 +402,7 @@ exports.getStudentSummary = async (req, res, next) => {
         // Verify student exists and belongs to teacher
         const student = await Student.findById(studentId);
         if (!student || !belongsToTenant(student, req.teacherId)) {
-            throw new ApiError('الطالب غير موجود أو لا تملك صلاحية الوصول إليه', 404);
+            throw new ApiError('Student not found or you do not have permission to access them', 404);
         }
 
         // 1. Get Today's Attendance
@@ -437,10 +437,10 @@ exports.getStudentSummary = async (req, res, next) => {
                 attendance: attendance ? {
                     status: attendance.status,
                     time: attendance.checkInTime || new Date(attendance.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
-                    session: attendance.session?.title || 'جلسة غير محددة'
+                    session: attendance.session?.title || 'Undefined Session'
                 } : null,
                 latestExam: latestExamResult ? {
-                    title: latestExamResult.examId?.title || 'امتحان غير محدد',
+                    title: latestExamResult.examId?.title || 'Undefined Exam',
                     score: latestExamResult.score,
                     fullMark: latestExamResult.examId?.fullMark || 0,
                     status: latestExamResult.status,
@@ -464,20 +464,20 @@ exports.portalLogin = async (req, res, next) => {
         const { code, password } = req.body;
 
         if (!code || !password) {
-            throw new ApiError('كود الطالب وكلمة المرور مطلوبين', 400);
+            throw new ApiError('Student code and password are required', 400);
         }
 
         const student = await Student.findOne({ nationalId: code }).select('+password');
 
         if (!student) {
-            throw new ApiError('بيانات الدخول غير صحيحة', 401);
+            throw new ApiError('Invalid credentials', 401);
         }
 
         // Check if password matches
         if (student.password) {
              const isMatch = await student.matchPassword(password);
              if (!isMatch) {
-                 throw new ApiError('بيانات الدخول غير صحيحة', 401);
+                 throw new ApiError('Invalid credentials', 401);
              }
         } else {
              // Fallback for legacy students without password
@@ -487,7 +487,7 @@ exports.portalLogin = async (req, res, next) => {
                  student.password = '123456'; // Will be hashed by pre-save
                  await student.save();
              } else {
-                 throw new ApiError('بيانات الدخول غير صحيحة', 401);
+                 throw new ApiError('Invalid credentials', 401);
              }
         }
 
@@ -514,14 +514,14 @@ exports.portalLogin = async (req, res, next) => {
         const { fullName, grade, email, phone, parentPhone, address, password, teacherCode } = req.body;
 
         if (!fullName || !grade || !parentPhone || !email || !phone || !address || !teacherCode) {
-            throw new ApiError('جميع البيانات مطلوبة (الاسم، الصف، الايميل، الهاتف، رقم ولي الأمر، العنوان، وكود المعلم)', 400);
+            throw new ApiError('All fields are required (Name, Grade, Email, Phone, Parent Phone, Address, and Teacher Code)', 400);
         }
 
         // Find teacher by code
         const teacher = await User.findOne({ teacherCode });
         
         if (!teacher) {
-            throw new ApiError('كود المعلم غير صحيح، يرجى التأكد من الكود والمحاولة مرة أخرى', 404);
+            throw new ApiError('Invalid teacher code, please verify and try again', 404);
         }
 
         let studentCode;
@@ -557,7 +557,7 @@ exports.portalLogin = async (req, res, next) => {
         }
 
         if (!student) {
-            throw new ApiError('تعذر إنشاء الحساب، حاول مرة أخرى', 500);
+            throw new ApiError('Could not create account, try again', 500);
         }
 
         // Generate & persist QR token for portal-registered students
@@ -571,7 +571,7 @@ exports.portalLogin = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'تم إنشاء الحساب بنجاح',
+            message: 'Account created successfully',
             data: {
                 code: studentCode,
                 name: student.fullName,
@@ -597,7 +597,7 @@ exports.getPortalDashboard = async (req, res, next) => {
         const student = await Student.findOne({ nationalId: code }).populate('teacherId', 'name centerName');
 
         if (!student) {
-            throw new ApiError('الطالب غير موجود', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         const teacherId = student.teacherId._id;
@@ -636,7 +636,7 @@ exports.getPortalDashboard = async (req, res, next) => {
                     name: student.fullName,
                     code: student.nationalId,
                     grade: student.grade,
-                    center: student.teacherId.centerName || 'السنتر التعليمي',
+                    center: student.teacherId.centerName || 'Learning Center',
                     enrollmentDate: student.createdAt
                 },
                 stats: {
@@ -647,7 +647,7 @@ exports.getPortalDashboard = async (req, res, next) => {
                 },
                 exams: recentExams.map(result => ({
                     id: result._id,
-                    title: result.examId?.title || 'اختبار',
+                    title: result.examId?.title || 'Quiz/Exam',
                     score: result.score,
                     fullMark: result.examId?.fullMark || 0,
                     date: result.examId?.date || result.createdAt,
@@ -657,7 +657,7 @@ exports.getPortalDashboard = async (req, res, next) => {
                     required: requiredAmount,
                     paid: paidAmount,
                     remaining: remainingAmount,
-                    currency: 'ج.م'
+                    currency: 'EGP'
                 }
             }
         });
@@ -677,22 +677,22 @@ exports.changePortalPassword = async (req, res, next) => {
         const { code, currentPassword, newPassword } = req.body;
 
         if (!code || !currentPassword || !newPassword) {
-            throw new ApiError('جميع البيانات مطلوبة', 400);
+            throw new ApiError('All fields are required', 400);
         }
 
         if (newPassword.length < 6) {
-            throw new ApiError('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 400);
+            throw new ApiError('Password must be at least 6 characters', 400);
         }
 
         const student = await Student.findOne({ nationalId: code }).select('+password');
 
         if (!student) {
-            throw new ApiError('الطالب غير موجود', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         // Verify old password
         if (!(await student.matchPassword(currentPassword))) {
-            throw new ApiError('كلمة المرور الحالية غير صحيحة', 401);
+            throw new ApiError('Current password is incorrect', 401);
         }
 
         // Update password
@@ -701,7 +701,7 @@ exports.changePortalPassword = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم تغيير كلمة المرور بنجاح'
+            message: 'Password changed successfully'
         });
     } catch (error) {
         next(error);
@@ -718,17 +718,17 @@ exports.forgotPortalPassword = async (req, res, next) => {
         const { code } = req.body;
 
         if (!code) {
-            throw new ApiError('كود الطالب مطلوب', 400);
+            throw new ApiError('Student code is required', 400);
         }
 
         const student = await Student.findOne({ nationalId: code });
 
         if (!student) {
-            throw new ApiError('بيانات الطالب غير صحيحة', 404);
+            throw new ApiError('Invalid student details', 404);
         }
 
         if (!student.email) {
-            throw new ApiError('لا يوجد بريد إلكتروني مسجل لهذا الطالب. يرجى التواصل مع الإدارة.', 400);
+            throw new ApiError('No registered email for this student. Please contact administration.', 400);
         }
 
         // Generate and send OTP
@@ -738,12 +738,12 @@ exports.forgotPortalPassword = async (req, res, next) => {
             await sendPasswordResetOTP(student.email, otpDoc.otp, student.fullName);
         } catch (emailError) {
             console.error('Failed to send email:', emailError);
-            throw new ApiError('فشل إرسال البريد الإلكتروني. يرجى المحاولة لاحقاً.', 500);
+            throw new ApiError('Failed to send email. Please try again later.', 500);
         }
 
         res.status(200).json({
             success: true,
-            message: `تم إرسال رمز التحقق إلى ${student.email}`,
+            message: `Verification code sent to ${student.email}`,
             data: { email: student.email } // Partial email could be safer but internal app trusted
         });
     } catch (error) {
@@ -761,22 +761,22 @@ exports.resetPortalPassword = async (req, res, next) => {
         const { code, otp, newPassword } = req.body;
 
         if (!code || !otp || !newPassword) {
-            throw new ApiError('جميع البيانات مطلوبة', 400);
+            throw new ApiError('All fields are required', 400);
         }
 
         const student = await Student.findOne({ nationalId: code });
         if (!student) {
-            throw new ApiError('الطالب غير موجود', 404);
+            throw new ApiError('Student not found', 404);
         }
 
         if (!student.email) {
-            throw new ApiError('الطالب ليس لديه بريد إلكتروني مسجل', 400);
+            throw new ApiError('Student does not have a registered email', 400);
         }
 
-        // Verify OTP (using student's email)
+        // Verify OTP (using student\'s email)
         const otpDoc = await OTP.verifyOTP(student.email, otp, 'password-reset');
         if (!otpDoc) {
-            throw new ApiError('رمز التحقق غير صحيح أو منتهي الصلاحية', 400);
+            throw new ApiError('Verification code is incorrect or expired', 400);
         }
 
         // Update Password
@@ -785,7 +785,7 @@ exports.resetPortalPassword = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'تم إعادة تعيين كلمة المرور بنجاح'
+            message: 'Password reset successfully'
         });
     } catch (error) {
         next(error);

@@ -33,17 +33,17 @@ export default function AuthLayout({
             {/* Card Section */}
             <div className="flex-1 flex items-start justify-center px-3 xs:px-4 sm:px-6 lg:px-8">
                 <div className="w-full max-w-lg">
-                    <div className="bg-white rounded-xl xs:rounded-2xl p-4 xs:p-6 sm:p-8 border-2 border-black/5 shadow-md shadow-black/10">
+                    <div className="bg-white rounded-xl xs:rounded-2xl p-4 xs:p-6 sm:p-8 border border-black/5 shadow-sm">
                         {/* Title */}
                         {title && (
-                            <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-gray-800 text-center mb-4 xs:mb-6">
+                            <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-gray-900 text-center mb-4 xs:mb-6">
                                 {title}
                             </h2>
                         )}
 
                         {/* Subtitle */}
                         {subtitle && (
-                            <p className="text-xs xs:text-sm text-purple-600 text-center mb-3 xs:mb-4 px-2 leading-relaxed">
+                            <p className="text-xs xs:text-sm text-indigo-600 text-center mb-3 xs:mb-4 px-2 leading-relaxed">
                                 {subtitle}
                             </p>
                         )}

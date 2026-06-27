@@ -18,15 +18,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         const inputType = isPasswordType && showPassword ? 'text' : type;
 
         const getIcon = () => {
-            if (icon === 'email') return <Mail className="h-5 w-5 text-purple-500" />;
-            if (icon === 'password') return <Lock className="h-5 w-5 text-gray-400" />;
+            if (icon === 'email') return <Mail className="h-5 w-5 text-indigo-500" />;
+            if (icon === 'password') return <Lock className="h-5 w-5 text-[#80848E]" />;
             return null;
         };
 
         return (
             <div className="w-full" dir="rtl">
                 {label && (
-                    <label className="block text-sm font-medium text-gray-600 mb-2 text-right">
+                    <label className="block text-sm font-medium text-gray-500 mb-2 text-right">
                         {label}
                     </label>
                 )}
@@ -36,7 +36,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none z-10"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#80848E] hover:text-gray-500 focus:outline-none z-10"
                             tabIndex={-1}
                         >
                             {showPassword ? (
@@ -54,8 +54,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                             w-full px-4 py-3.5
                             bg-white
                             border border-gray-200 rounded-xl
-                            text-right text-gray-800
-                            placeholder:text-gray-400
+                            text-right text-gray-900
+                            placeholder:text-[#80848E]
                             focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent
                             transition-all duration-200
                             ${icon !== 'none' ? 'pr-12' : ''}

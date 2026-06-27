@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.message || 'حدث خطأ ما');
+                throw new Error(data.message || 'Something went wrong');
             }
 
             setStatus('success');
@@ -44,25 +44,25 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <div className="max-w-md mx-auto text-left" dir="ltr">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
                 
-                <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
                     </svg>
                 </div>
 
-                <h2 className="text-2xl font-bold mb-2">نسيت كلمة المرور؟</h2>
-                <p className="text-gray-500 mb-8 text-sm">أدخل كود الطالب لاستلام رمز التحقق</p>
+                <h2 className="text-2xl font-bold mb-2">Forgot Password?</h2>
+                <p className="text-gray-500 mb-8 text-sm">Enter student code to receive verification code</p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="text-right">
-                        <label className="text-sm font-medium text-gray-700 mb-1 block">كود الطالب</label>
+                    <div className="text-left">
+                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Student Code</label>
                         <input
                             type="text"
-                            placeholder="ادخل كود الطالب"
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                            placeholder="Enter student code"
+                            className="w-full bg-[#FCFCFC] border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                             required
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
                     </div>
                     
                     {message && (
-                        <div className={`p-3 rounded-xl text-sm flex items-center gap-2 ${
+                        <div className={`p-3 rounded-xl text-sm flex items-center gap-2 text-left ${
                             status === 'error' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-600 border border-green-100'
                         }`}>
                              {status === 'error' ? (
@@ -89,19 +89,19 @@ export default function ForgotPasswordPage() {
                     <button
                         type="submit"
                         disabled={status === 'loading' || status === 'success'}
-                        className="w-full bg-[#6339AC] hover:bg-[#6339AC]/80 text-white rounded-xl py-3.5 font-bold shadow-lg shadow-primary-600/20 hover:shadow-primary-600/40 transition-all disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2"
+                        className="w-full bg-[#4F46E5] hover:bg-[#4F46E5]/80 text-white rounded-xl py-3.5 font-bold shadow-lg shadow-primary-600/20 hover:shadow-primary-600/40 transition-all disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2"
                     >
                         {status === 'loading' && (
                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         )}
-                        {status === 'success' ? 'تم الإرسال' : 'إرسال رمز التحقق'}
+                        {status === 'success' ? 'Sent' : 'Send Code'}
                     </button>
 
                     <Link 
                         href="/portal"
-                        className="block w-full text-gray-500 text-sm font-medium hover:text-gray-700 transition-colors"
+                        className="block w-full text-gray-500 text-sm font-medium hover:text-[#DBDEE1] transition-colors"
                     >
-                        العودة لتسجيل الدخول
+                        Back to Login
                     </Link>
                 </form>
             </div>

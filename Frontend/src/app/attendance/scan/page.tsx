@@ -44,7 +44,7 @@ export default function AttendanceScanPage() {
                 }
             } catch (e) {
                 console.error('Failed to load sessions:', e);
-                showToast('فشل في تحميل الجلسات', 'error');
+                showToast('Failed to load sessions', 'error');
             } finally {
                 setLoadingSessions(false);
             }
@@ -87,15 +87,11 @@ export default function AttendanceScanPage() {
                         aspectRatio: 1.0,
                     },
                     async (decodedText) => {
-                        // Keep camera running: do NOT stop after scan.
-                        // Anti-duplicate: ignore same token within 2 seconds.
                         const trimmed = decodedText.trim();
                         if (!trimmed) return;
-                        // Basic sanity: nationalId is digits only (reject noise)
                         if (!/^[0-9]{3,20}$/.test(trimmed)) return;
 
                         const now = Date.now();
-                        // Global cooldown to avoid rapid-fire repeats even on noise
                         if (now < cooldownRef.current) return;
                         cooldownRef.current = now + 1500;
                         const last = lastScanRef.current;
@@ -110,33 +106,31 @@ export default function AttendanceScanPage() {
                             const studentName = res?.data?.studentName || '';
 
                             if (status === 'new') {
-                                showToast(`تم تسجيل حضور: ${studentName}`, 'success');
+                                showToast(`Attendance registered for: ${studentName}`, 'success');
                             } else if (status === 'already') {
-                                showToast(`تم تسجيل هذا الطالب بالفعل: ${studentName}`, 'warning');
+                                showToast(`This student is already registered: ${studentName}`, 'warning');
                             } else {
-                                showToast('استجابة غير متوقعة من السيرفر', 'error');
+                                showToast('Unexpected server response', 'error');
                             }
                         } catch (err: any) {
                             const message =
                                 err?.response?.data?.message ||
                                 err?.response?.data?.error ||
-                                'فشل في تسجيل الحضور';
+                                'Failed to register attendance';
                             showToast(message, 'error');
                         }
                     },
-                    // ignore decode errors (keeps scanning)
                     () => { }
                 );
                 setScanState('scanning');
             } catch (e: any) {
                 console.error('Camera start failed:', e);
-                setCameraError('تعذر تشغيل الكاميرا. تأكد من إعطاء صلاحية الكاميرا.');
+                setCameraError('Unable to start camera. Make sure camera permission is granted.');
                 setScanState('error');
             }
         };
 
         (async () => {
-            // Always stop previous scanner when session changes/unmounts
             await stopScanner();
             scannerRef.current = null;
 
@@ -155,39 +149,39 @@ export default function AttendanceScanPage() {
     }, [selectedSessionId]);
 
     return (
-        <div className="space-y-6" dir="rtl">
-            <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10">
-                <h2 className="text-xl font-extrabold text-gray-900 mb-2">مسح QR لتسجيل الحضور</h2>
-                <p className="text-sm text-gray-600">اختر جلسة مفتوحة ثم ابدأ المسح بالكاميرا.</p>
+        <div className="space-y-6" dir="ltr">
+            <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10 text-left">
+                <h2 className="text-xl font-extrabold text-gray-900 mb-2">QR Scan for Attendance</h2>
+                <p className="text-sm text-gray-500">Select an open session then start camera scanning.</p>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-md shadow-black/10 space-y-4">
+            <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10 space-y-4 text-left">
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm text-gray-700 font-semibold">الجلسة المفتوحة (in-progress)</label>
+                    <label className="text-sm text-[#DBDEE1] font-semibold">Open Session (in-progress)</label>
                     <select
-                        className="rounded-xl border-2 border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                        className="rounded-xl border-2 border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-left"
                         value={selectedSessionId}
                         onChange={(e) => setSelectedSessionId(e.target.value)}
                         disabled={loadingSessions}
                     >
-                        <option value="">اختر جلسة</option>
+                        <option value="">Select Session</option>
                         {inProgressSessions.map((s) => (
                             <option key={(s as any).id || (s as any)._id} value={(s as any).id || (s as any)._id}>
                                 {(s.title ? `${s.title} - ` : '')}
-                                {s.grade} {s.classroom ? `(${s.classroom})` : ''} — {new Date(s.date).toLocaleDateString('ar-EG')}
+                                {s.grade} {s.classroom ? `(${s.classroom})` : ''} — {new Date(s.date).toLocaleDateString('en-US')}
                             </option>
                         ))}
                     </select>
                     {!loadingSessions && inProgressSessions.length === 0 && (
-                        <p className="text-xs text-gray-500">لا توجد جلسات مفتوحة الآن. افتح جلسة من صفحة الجلسات.</p>
+                        <p className="text-xs text-gray-500">No open sessions now. Open a session from the sessions page.</p>
                     )}
                 </div>
 
-                <div className="rounded-2xl border-2 border-gray-100 p-4">
-                    <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-semibold text-gray-700">الكاميرا</p>
+                <div className="rounded-2xl border-2 border-gray-200 p-4">
+                    <div className="flex items-center justify-between mb-3 text-left">
+                        <p className="text-sm font-semibold text-[#DBDEE1]">Camera</p>
                         <p className="text-xs text-gray-500">
-                            الحالة: {scanState === 'scanning' ? 'يتم المسح...' : scanState === 'starting' ? 'تشغيل الكاميرا...' : scanState === 'error' ? 'خطأ' : 'متوقفة'}
+                            Status: {scanState === 'scanning' ? 'Scanning...' : scanState === 'starting' ? 'Starting camera...' : scanState === 'error' ? 'Error' : 'Stopped'}
                         </p>
                     </div>
 
@@ -197,12 +191,9 @@ export default function AttendanceScanPage() {
                         </div>
                     )}
 
-                    {/* html5-qrcode will render video here */}
                     <div id={regionId} className="w-full max-w-md mx-auto" />
                 </div>
             </div>
         </div>
     );
 }
-
-

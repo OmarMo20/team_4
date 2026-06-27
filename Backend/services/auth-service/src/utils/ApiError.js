@@ -12,7 +12,7 @@ class ApiError extends Error {
             message = messageOrStatusCode || 'Error';
         } else {
             // Signature: (message: string, statusCode?: number)
-            message = statusCodeOrMessage || 'خطأ';
+            message = statusCodeOrMessage || 'Error';
             statusCode = typeof messageOrStatusCode === 'number' ? messageOrStatusCode : 500;
         }
 
@@ -26,31 +26,31 @@ class ApiError extends Error {
     }
 
 
-    static badRequest(message = 'طلب غير صالح') {
+    static badRequest(message = 'Invalid request') {
         return new ApiError(400, message);
     }
 
 
-    static unauthorized(message = 'غير مصرح') {
+    static unauthorized(message = 'Unauthorized') {
         return new ApiError(401, message);
     }
 
 
-    static forbidden(message = 'غير مسموح') {
+    static forbidden(message = 'Forbidden') {
         return new ApiError(403, message);
     }
 
 
-    static notFound(message = 'غير موجود') {
+    static notFound(message = 'Not found') {
         return new ApiError(404, message);
     }
 
 
-    static conflict(message = 'تعارض في البيانات') {
+    static conflict(message = 'Data conflict') {
         return new ApiError(409, message);
     }
 
-    static internal(message = 'خطأ داخلي في الخادم') {
+    static internal(message = 'Internal server error') {
         return new ApiError(500, message, false);
     }
 }
