@@ -183,8 +183,8 @@ export default function AdminPage() {
                                                 <div className="text-sm text-gray-500">{teacher.subject}</div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-[#DBDEE1]">{teacher.email}</td>
-                                        <td className="px-6 py-4 text-[#DBDEE1]">{teacher.phone || '-'}</td>
+                                        <td className="px-6 py-4 text-gray-700">{teacher.email}</td>
+                                        <td className="px-6 py-4 text-gray-700">{teacher.phone || '-'}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
                                                 <Users className="h-4 w-4 text-[#80848E]" />

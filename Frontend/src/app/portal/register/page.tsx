@@ -122,7 +122,7 @@ export default function RegisterPage() {
                     {step === 1 && (
                         <div className="space-y-4">
                              <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Teacher Code <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Teacher Code <span className="text-red-500">*</span></label>
                                 <input
                                     type="text"
                                     placeholder="Enter teacher code"
@@ -133,7 +133,7 @@ export default function RegisterPage() {
                                 />
                             </div>
                              <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Full Name <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Full Name <span className="text-red-500">*</span></label>
                                 <input
                                     type="text"
                                     placeholder="Enter your full name"
@@ -144,7 +144,7 @@ export default function RegisterPage() {
                                 />
                             </div>
                              <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Email Address <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Email Address <span className="text-red-500">*</span></label>
                                 <input
                                     type="email"
                                     placeholder="Enter your email"
@@ -169,7 +169,7 @@ export default function RegisterPage() {
                     {step === 2 && (
                         <div className="space-y-4">
                             <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Grade / Year <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Grade / Year <span className="text-red-500">*</span></label>
                                 <div className="relative">
                                     <button
                                         type="button"
@@ -223,7 +223,7 @@ export default function RegisterPage() {
                                 </div>
                             </div>
                              <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Center Name <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Center Name <span className="text-red-500">*</span></label>
                                 <input
                                     type="text"
                                     placeholder="Center Name"
@@ -238,7 +238,7 @@ export default function RegisterPage() {
                                 <button
                                     type="button"
                                     onClick={handlePrev}
-                                    className="w-1/3 bg-gray-100 hover:bg-gray-200 text-[#DBDEE1] rounded-xl py-3 font-medium transition-colors"
+                                    className="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 font-medium transition-colors"
                                 >
                                     Previous
                                 </button>
@@ -257,7 +257,7 @@ export default function RegisterPage() {
                     {step === 3 && (
                         <div className="space-y-4">
                              <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Phone Number <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Phone Number <span className="text-red-500">*</span></label>
                                 <input
                                     type="tel"
                                     placeholder="01xxxxxxxxx"
@@ -268,7 +268,7 @@ export default function RegisterPage() {
                                 />
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Parent's Phone Number <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Parent's Phone Number <span className="text-red-500">*</span></label>
                                 <input
                                     type="tel"
                                     placeholder="01xxxxxxxxx"
@@ -282,7 +282,7 @@ export default function RegisterPage() {
                                 )}
                             </div>
                              <div>
-                                <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Address <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-medium text-gray-700 mb-1 block">Address <span className="text-red-500">*</span></label>
                                 <input
                                     type="text"
                                     placeholder="Detailed Address"
@@ -297,7 +297,7 @@ export default function RegisterPage() {
                                 <button
                                     type="button"
                                     onClick={handlePrev}
-                                    className="w-1/3 bg-gray-100 hover:bg-gray-200 text-[#DBDEE1] rounded-xl py-3 font-medium transition-colors"
+                                    className="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 font-medium transition-colors"
                                 >
                                     Previous
                                 </button>

@@ -969,7 +969,7 @@ export default function SessionControlPage() {
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => router.push(isAssistant ? ROUTES.ATTENDANCE : '/dashboard/attendance')}
-                                        className="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-[#DBDEE1] hover:bg-[#FCFCFC] transition-colors"
+                                        className="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-[#FCFCFC] transition-colors"
                                     >
                                         <ChevronRight className="h-4 w-4 rotate-180" />
                                         <span className="hidden sm:inline">Back</span>
@@ -1215,13 +1215,13 @@ export default function SessionControlPage() {
                             {/* Student Code */}
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 uppercase">Student Code</label>
-                                <p className="mt-1 text-base text-[#DBDEE1]">{selectedAttendance.student?.nationalId || 'Not Available'}</p>
+                                <p className="mt-1 text-base text-gray-700">{selectedAttendance.student?.nationalId || 'Not Available'}</p>
                             </div>
 
                             {/* Parent Phone */}
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 uppercase">Parent's Phone</label>
-                                <p className="mt-1 text-base text-[#DBDEE1]">
+                                <p className="mt-1 text-base text-gray-700">
                                     {selectedAttendance.student?.parentPhone || 'Not Available'}
                                 </p>
                             </div>
@@ -1244,7 +1244,7 @@ export default function SessionControlPage() {
                             {/* Attendance Time */}
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 uppercase">Registration Time</label>
-                                <p className="mt-1 text-base text-[#DBDEE1]">
+                                <p className="mt-1 text-base text-gray-700">
                                     {new Date(selectedAttendance.createdAt).toLocaleString('en-US', {
                                         year: 'numeric',
                                         month: 'long',
@@ -1259,7 +1259,7 @@ export default function SessionControlPage() {
                             {session && (
                                 <div>
                                     <label className="text-xs font-semibold text-gray-500 uppercase">Session</label>
-                                    <p className="mt-1 text-base text-[#DBDEE1]">
+                                    <p className="mt-1 text-base text-gray-700">
                                         {(session as any)?.title || 'Session'} • {session.price} EGP
                                     </p>
                                 </div>

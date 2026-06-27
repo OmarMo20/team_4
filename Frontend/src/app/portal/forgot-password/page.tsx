@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Student Code</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Student Code</label>
                         <input
                             type="text"
                             placeholder="Enter student code"
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
 
                     <Link 
                         href="/portal"
-                        className="block w-full text-gray-500 text-sm font-medium hover:text-[#DBDEE1] transition-colors"
+                        className="block w-full text-gray-500 text-sm font-medium hover:text-gray-700 transition-colors"
                     >
                         Back to Login
                     </Link>

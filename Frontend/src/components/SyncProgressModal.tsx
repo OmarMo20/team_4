@@ -66,7 +66,7 @@ export default function SyncProgressModal({
           {!allCompleted ? (
             <>
               <div className="flex items-center justify-between mb-2 text-left">
-                <span className="text-sm font-medium text-[#DBDEE1]">
+                <span className="text-sm font-medium text-gray-700">
                   Uploading data...
                 </span>
                 <span className="text-sm font-bold text-indigo-600">

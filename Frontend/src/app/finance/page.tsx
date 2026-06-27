@@ -418,7 +418,7 @@ export default function FinancePage() {
                                                 className="hover:bg-[#FCFCFC] transition cursor-pointer"
                                                 onClick={() => setSelectedPayment(payment)}
                                             >
-                                                <td className="py-3 px-3 text-[#DBDEE1]">
+                                                <td className="py-3 px-3 text-gray-700">
                                                     {payment.type === 'tuition' ? 'Session' : 'Fee'}
                                                 </td>
                                                 <td className="py-3 px-3 text-gray-900 font-medium">
@@ -533,14 +533,14 @@ export default function FinancePage() {
 
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 uppercase">Student Code</label>
-                                <p className="mt-1 text-base text-[#DBDEE1]">
+                                <p className="mt-1 text-base text-gray-700">
                                     {selectedPayment.student.nationalId || 'Not Available'}
                                 </p>
                             </div>
 
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 uppercase">Parent's Phone Number</label>
-                                <p className="mt-1 text-base text-[#DBDEE1]">
+                                <p className="mt-1 text-base text-gray-700">
                                     {selectedPayment.student.parentPhone || 'Not Available'}
                                 </p>
                             </div>
@@ -563,7 +563,7 @@ export default function FinancePage() {
                             {selectedPayment.description && (
                                 <div>
                                     <label className="text-xs font-semibold text-gray-500 uppercase">Description</label>
-                                    <p className="mt-1 text-base text-[#DBDEE1]">{selectedPayment.description}</p>
+                                    <p className="mt-1 text-base text-gray-700">{selectedPayment.description}</p>
                                 </div>
                             )}
                         </div>

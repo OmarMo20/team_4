@@ -21,9 +21,9 @@ const generateStudentCode = () => {
     return crypto.randomInt(1000, 9999).toString();
 };
 
-// Generate random secure password (12 characters Alphanumeric + Symbols)
-const generateStudentPassword = (length = 12) => {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=';
+// Generate random secure password (6-digit numeric passcode)
+const generateStudentPassword = (length = 6) => {
+    const charset = '0123456789';
     let password = '';
     while (password.length < length) {
         const byte = crypto.randomBytes(1)[0];
@@ -467,7 +467,10 @@ exports.portalLogin = async (req, res, next) => {
             throw new ApiError('Student code and password are required', 400);
         }
 
-        const student = await Student.findOne({ nationalId: code }).select('+password');
+        // Find student by EITHER code (nationalId) OR email
+        const isEmail = code.includes('@');
+        const query = isEmail ? { email: code.trim().toLowerCase() } : { nationalId: code.trim() };
+        const student = await Student.findOne(query).select('+password');
 
         if (!student) {
             throw new ApiError('Invalid credentials', 401);

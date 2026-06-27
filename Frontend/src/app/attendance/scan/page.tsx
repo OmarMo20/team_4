@@ -157,7 +157,7 @@ export default function AttendanceScanPage() {
 
             <div className="bg-white rounded-2xl p-6 border-2 border-black/5 shadow-2xl shadow-black/10 space-y-4 text-left">
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm text-[#DBDEE1] font-semibold">Open Session (in-progress)</label>
+                    <label className="text-sm text-gray-700 font-semibold">Open Session (in-progress)</label>
                     <select
                         className="rounded-xl border-2 border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-left"
                         value={selectedSessionId}
@@ -179,7 +179,7 @@ export default function AttendanceScanPage() {
 
                 <div className="rounded-2xl border-2 border-gray-200 p-4">
                     <div className="flex items-center justify-between mb-3 text-left">
-                        <p className="text-sm font-semibold text-[#DBDEE1]">Camera</p>
+                        <p className="text-sm font-semibold text-gray-700">Camera</p>
                         <p className="text-xs text-gray-500">
                             Status: {scanState === 'scanning' ? 'Scanning...' : scanState === 'starting' ? 'Starting camera...' : scanState === 'error' ? 'Error' : 'Stopped'}
                         </p>

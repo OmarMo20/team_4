@@ -104,7 +104,7 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                                     <td className="px-3 py-3 text-sm font-medium text-gray-500 whitespace-nowrap text-left">
                                         {result.examName}
                                     </td>
-                                    <td className="px-3 py-3 text-center text-sm font-bold text-[#DBDEE1] whitespace-nowrap">
+                                    <td className="px-3 py-3 text-center text-sm font-bold text-gray-700 whitespace-nowrap">
                                         {result.score}/{result.fullMark}
                                     </td>
                                     <td className="px-3 py-3 text-center whitespace-nowrap">
@@ -195,7 +195,7 @@ export default function GradesTable({ results, loading, onSearch, onEdit, onDele
                                         className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${
                                             pagination.page === pageNum
                                                 ? 'bg-indigo-600 text-white'
-                                                : 'bg-gray-100 text-[#DBDEE1] hover:bg-gray-200'
+                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                         }`}
                                     >
                                         {pageNum}

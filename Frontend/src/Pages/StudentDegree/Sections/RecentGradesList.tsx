@@ -27,7 +27,7 @@ export default function RecentGradesList({ grades, loading }: RecentGradesProps)
                         <div key={grade.id} className="p-4 md:p-5 bg-[#F9F9F9] rounded-2xl flex flex-col gap-1 md:gap-2 hover:bg-gray-100 transition-colors">
                             <div className="flex items-center justify-between">
                                 <p className="font-bold text-gray-900 text-base md:text-lg truncate max-w-[150px] md:max-w-none">{grade.studentName}</p>
-                                <span className="text-xs md:text-sm font-bold text-[#DBDEE1] whitespace-nowrap">{grade.score}/{grade.fullMark}</span>
+                                <span className="text-xs md:text-sm font-bold text-gray-700 whitespace-nowrap">{grade.score}/{grade.fullMark}</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <p className="text-xs md:text-sm text-[#80848E] font-medium truncate max-w-[120px] md:max-w-none">{grade.examName}</p>

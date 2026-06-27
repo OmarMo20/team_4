@@ -90,7 +90,7 @@ export default function AddStudentPage() {
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Student Full Name
                             </label>
                             <input
@@ -104,7 +104,7 @@ export default function AddStudentPage() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Student Phone
                             </label>
                             <input
@@ -131,7 +131,7 @@ export default function AddStudentPage() {
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Parent Phone
                         </label>
                         <input
@@ -157,7 +157,7 @@ export default function AddStudentPage() {
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Grade
                         </label>
                         <input
@@ -185,7 +185,7 @@ export default function AddStudentPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Center
                             </label>
                             <input
@@ -198,7 +198,7 @@ export default function AddStudentPage() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Schedule
                             </label>
                             <input
@@ -226,7 +226,7 @@ export default function AddStudentPage() {
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-[#DBDEE1] mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Monthly Fee (EGP)
                             </label>
                             <input
@@ -248,7 +248,7 @@ export default function AddStudentPage() {
                                 onChange={handleInputChange}
                                 className="w-4 h-4 text-indigo-600 border-[#35373C] rounded focus:ring-indigo-500"
                             />
-                            <label htmlFor="paidUntil" className="text-sm text-[#DBDEE1]">
+                            <label htmlFor="paidUntil" className="text-sm text-gray-700">
                                 Month Paid
                             </label>
                         </div>

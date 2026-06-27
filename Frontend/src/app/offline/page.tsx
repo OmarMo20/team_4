@@ -143,7 +143,7 @@ export default function OfflinePage() {
 
             <button
               onClick={() => router.back()}
-              className="w-full bg-gray-100 text-[#DBDEE1] py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+              className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
             >
               Go Back
             </button>

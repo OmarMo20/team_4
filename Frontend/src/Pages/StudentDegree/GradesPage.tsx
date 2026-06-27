@@ -183,7 +183,7 @@ export default function GradesPage() {
                     </button>
                     <button
                         onClick={() => setViewMode(viewMode === 'overview' ? 'table' : 'overview')}
-                        className={`px-6 md:px-8 py-3 md:py-3.5 rounded-[1.8rem] font-bold transition-all flex items-center justify-center gap-2 text-base md:text-lg flex-1 sm:flex-none ${viewMode === 'table' ? 'bg-white shadow-xl text-gray-900' : 'text-gray-500 hover:text-[#DBDEE1]'
+                        className={`px-6 md:px-8 py-3 md:py-3.5 rounded-[1.8rem] font-bold transition-all flex items-center justify-center gap-2 text-base md:text-lg flex-1 sm:flex-none ${viewMode === 'table' ? 'bg-white shadow-xl text-gray-900' : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         <BookOpen className="h-5 w-5" />

@@ -89,7 +89,7 @@ function ResetPasswordArgs() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Student Code</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Student Code</label>
                         <input
                             type="text"
                             name="code"
@@ -102,7 +102,7 @@ function ResetPasswordArgs() {
                     </div>
 
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Verification Code (OTP)</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Verification Code (OTP)</label>
                         <input
                             type="text"
                             name="otp"
@@ -115,7 +115,7 @@ function ResetPasswordArgs() {
                     </div>
 
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">New Password</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">New Password</label>
                         <input
                             type="password"
                             name="newPassword"
@@ -129,7 +129,7 @@ function ResetPasswordArgs() {
                     </div>
 
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Confirm Password</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Confirm Password</label>
                         <input
                             type="password"
                             name="confirmPassword"
@@ -171,7 +171,7 @@ function ResetPasswordArgs() {
                     
                     <Link 
                         href="/portal"
-                        className="block w-full text-gray-500 text-sm font-medium hover:text-[#DBDEE1] transition-colors pt-4"
+                        className="block w-full text-gray-500 text-sm font-medium hover:text-gray-700 transition-colors pt-4"
                     >
                         Cancel and Go Back
                     </Link>

@@ -56,10 +56,10 @@ export default function PortalLoginPage() {
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Student Code</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Student Code or Email</label>
                         <input
                             type="text"
-                            placeholder="Enter student code"
+                            placeholder="Enter student code or email"
                             className="w-full bg-[#FCFCFC] border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
@@ -68,7 +68,7 @@ export default function PortalLoginPage() {
                     </div>
 
                     <div className="text-left">
-                        <label className="text-sm font-medium text-[#DBDEE1] mb-1 block">Password</label>
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Password</label>
                         <input
                             type="password"
                             placeholder="*************"
