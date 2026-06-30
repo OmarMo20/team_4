@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: mohammededris/class-track-frontend
+          image: mohammededris/class-track-frontend:latest
           ports:
             - containerPort: 3000
           env:
@@ -22,3 +22,5 @@ spec:
               value: "/api"
             - name: NEXT_PUBLIC_APP_NAME
               value: "ClassTrack"
+            - name: INTERNAL_API_URL
+              value: "http://api-gateway-cluster-ip-service:5000/api"

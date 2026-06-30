@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce # Required for MongoDB
+  resources:
+    requests:
+      storage: 1Gi # Adjust size as needed

@@ -18,15 +18,14 @@ const getApiUrl = () => {
         return localDefault;
     }
 
-    if (process.env.NEXT_PUBLIC_API_URL) {
-        const url = process.env.NEXT_PUBLIC_API_URL;
-        if (typeof window !== 'undefined') {
-            console.log('🔗 Using API URL from environment:', url);
-        }
-        return url;
+    // If running in the browser (client-side)
+    if (typeof window !== 'undefined') {
+        return process.env.NEXT_PUBLIC_API_URL || '/api';
     }
 
-    return localDefault;
+    // If running on the server (SSR, API routes)
+    // Use INTERNAL_API_URL if provided at runtime, otherwise fallback to build-time variable
+    return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || localDefault;
 };
 
 export const API_URL = getApiUrl();

@@ -11,7 +11,7 @@ export const setToken = (token: string): void => {
     // Set cookie with 7 day expiry
     Cookies.set(TOKEN_KEY, token, {
         expires: 7,
-        secure: process.env.NODE_ENV === 'production',
+        secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
         sameSite: 'lax'
     });
 };
