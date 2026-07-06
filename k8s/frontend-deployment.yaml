@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: frontend
+  template:
+    metadata:
+      labels:
+        component: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: omarmo20/class-track-frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: "/api"
+            - name: NEXT_PUBLIC_APP_NAME
+              value: "ClassTrack"
+            - name: INTERNAL_API_URL
+              value: "http://api-gateway-cluster-ip-service:5000/api"
