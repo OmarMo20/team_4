@@ -33,7 +33,7 @@ spec:
             - name: EMAIL_FROM
               value: "ClassTrack <classtrack123@gmail.com>"
             - name: CORS_ORIGINS
-              value: "http://localhost:3000,http://localhost:5173,http://localhost:80,http://192.168.49.2,http://192.168.49.2:80,http://54.93.32.200:30080"
+              value: "http://localhost:3000,http://localhost:5173,http://localhost:80,http://192.168.49.2,http://192.168.49.2:80,http://3.74.159.238:30080"
             - name: RATE_LIMIT_WINDOW_MS
               value: "900000"
             - name: RATE_LIMIT_MAX_REQUESTS
