@@ -41,15 +41,29 @@ const register = catchAsync(async (req, res) => {
 
     // Generate and send OTP
     const otpDoc = await OTP.createOTP(email.toLowerCase(), 'registration');
-    await sendRegistrationOTP(email, otpDoc.otp, name);
+    try {
+        await sendRegistrationOTP(email, otpDoc.otp, name);
 
-    res.status(201).json({
-        success: true,
-        message: 'Verification code sent to your email',
-        data: {
-            email: user.email,
-        },
-    });
+        res.status(201).json({
+            success: true,
+            message: 'Verification code sent to your email',
+            data: {
+                email: user.email,
+            },
+        });
+    } catch (err) {
+        // Log the email error but do not fail the whole registration flow.
+        console.error('Failed to send registration email:', err && err.message ? err.message : err);
+
+        res.status(201).json({
+            success: true,
+            message: 'Account created but failed to send verification email. Contact support or try resending the code.',
+            data: {
+                email: user.email,
+            },
+            warning: 'email_send_failed',
+        });
+    }
 });
 
 // Verify registration OTP
